@@ -1,0 +1,7 @@
+var/cache/ocs
+var/cache/se3_install
+var/www/se3/includes/menu.d
+var/www/se3/ocsreports
+etc/apache2se/conf.d
+etc/logrotate.d/ocsinventory-NG
+usr/local/share/perl/5.8.4/Apache
