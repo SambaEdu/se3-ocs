@@ -1,0 +1,109 @@
+#!/bin/sh
+# postinst script for se3-ocs
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+
+case "$1" in
+    install|configure)
+
+	
+
+### on suppose que l'on est sous debian :D  ####
+WWWPATH="/var/www"
+## recuperation des variables necessaires pour interoger mysql ###
+if [ -e $WWWPATH/se3/includes/config.inc.php ]; then
+	dbhost=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbhost=" | cut -d = -f2 | cut -d \" -f2`
+	dbname=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbname=" | cut	-d = -f 2 |cut -d \" -f 2`
+	dbuser=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbuser=" | cut -d = -f 2 | cut -d \" -f 2`
+	dbpass=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbpass=" | cut -d = -f 2 | cut -d \" -f 2`
+else
+	echo "Fichier de configuration inaccessible, le script ne peut se poursuivre."
+	exit 1
+fi
+
+test_exist=`echo "SELECT id FROM params WHERE name='inventaire'" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N`
+if [ "X$test_exist" = "X" ]; then # if empty
+	echo "INSERT INTO params VALUES ('', 'inventaire', '0', 0, 'Activation de l\'inventaire', 6)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
+fi
+
+
+# On teste si la base existe deja et si on a le mot de passe (version etch)
+if [ -e $WWWPATH/se3/includes/dbconfig.inc.php ] 
+then
+	MAJ_OCS = 1
+fi
+
+# Creation du mdp
+mdp=`date|md5sum|cut -c 3-9`
+
+
+### recup pass root mysql
+[ ! -e /root/.my.cnf ] && echo "Lecture du pass root mysql impossible, /root/.my.cnf inexistant" 
+password=$(cat /root/.my.cnf | grep password | cut -d= -f2)
+
+# Si la base n'existe pas deja on la cree et la remplie
+# Si elle existe on l'a met a jour
+
+mysql -h localhost -u root -p$password --force < /usr/share/ocsinventory-server/ocsreports/files/ocsbase.sql 2>/dev/null
+mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase-se3.sql 2>/dev/null
+
+mysql -h localhost -u root -p$password -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY '$mdp'";
+mysql -h localhost -u root -p$password -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs@localhost IDENTIFIED BY '$mdp'";
+
+# Creation de la conf
+echo "<?php
+\$_SESSION[\"SERVEUR_SQL\"]=\"localhost\";
+\$_SESSION[\"COMPTE_BASE\"]=\"ocs\";
+\$_SESSION[\"PSWD_BASE\"]=\"$mdp\";
+?>" > /var/www/se3/includes/dbconfig.inc.php
+
+# On supprime l'ancienne version si elle existe
+if [ -e /etc/apache2se/conf.d/ocsinventory.conf ] 
+then
+	rm -f /etc/apache2se/conf.d/ocsinventory.conf
+fi
+
+ln -s /etc/ocsinventory/ocsinventory.conf /etc/apache2se/conf.d/ocsinventory.conf
+
+if [ -e /etc/apache2/conf.d/ocsinventory.conf ] 
+then
+	rm -f /etc/apache2/conf.d/ocsinventory.conf
+fi
+
+perl -pi -e "s/.*OCS_DB_PWD.*/PerlSetVar OCS_DB_PWD $mdp/" /etc/ocsinventory/ocsinventory.conf
+
+
+/usr/share/se3/sbin/permse3	
+
+# On relance apache2se
+/etc/init.d/apache2se restart 2>/dev/null
+
+	;;
+	abort-upgrade|abort-remove|abort-deconfigure)
+	;;
+	*)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac 
+
+#DEBHELPER#
+
+exit 0
+
+

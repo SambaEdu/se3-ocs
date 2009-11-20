@@ -1,0 +1,329 @@
+#!/bin/sh
+# postinst script for se3-clonage
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+
+case "$1" in
+    install|configure)
+
+	
+
+### on suppose que l'on est sous debian  ####
+WWWPATH="/var/www"
+## recuperation des variables necessaires pour interoger mysql ###
+if [ -e $WWWPATH/se3/includes/config.inc.php ]; then
+	dbhost=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbhost=" | cut -d = -f2 | cut -d \" -f2`
+	dbname=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbname=" | cut	-d = -f 2 |cut -d \" -f 2`
+	dbuser=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbuser=" | cut -d = -f 2 | cut -d \" -f 2`
+	dbpass=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbpass=" | cut -d = -f 2 | cut -d \" -f 2`
+else
+	echo "Fichier de configuration inaccessible, le script ne peut se poursuivre."
+	exit 1
+fi
+
+test_exist=`echo "SELECT id FROM params WHERE name='inventaire'" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N`
+if [ "X$test_exist" = "X" ]; then # if empty
+	echo "INSERT INTO params VALUES ('', 'inventaire', '0', 0, 'Activation de l\'inventaire', 6)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
+fi
+
+
+
+# Création de la base
+mdp=`date|md5sum|cut -c 3-9`
+
+### recup pass root mysql
+[ ! -e /root/.my.cnf ] && echo "Lecture du pass root mysql impossible, /root/.my.cnf inexistant" 
+password=$(cat /root/.my.cnf | grep password | cut -d= -f2)
+set +e
+
+mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase-se3.sql 2>/dev/null
+mysql -h localhost -u root -p$password -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY '$mdp'";
+mysql -h localhost -u root -p$password -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs@localhost IDENTIFIED BY '$mdp'";
+
+# Création de la conf
+echo "<?php
+\$_SESSION[\"SERVEUR_SQL\"]=\"localhost\";
+\$_SESSION[\"COMPTE_BASE\"]=\"ocs\";
+\$_SESSION[\"PSWD_BASE\"]=\"$mdp\";
+?>" > /var/www/se3/includes/dbconfig.inc.php
+
+cd /var/cache/ocs
+
+# Which host run database server
+DB_SERVER_HOST="localhost"
+# On which port run database server
+DB_SERVER_PORT="3306"
+# Where is Apache daemon binary (if empty, will try to find it)
+APACHE_BIN="/usr/sbin/apache2"
+# Where is Apache configuration file (if empty, will try to find it)
+APACHE_CONFIG_FILE="/etc/apache2se/apache2.conf"
+# Where is Apache includes configuration directory (if emty, will try to find it)
+APACHE_CONFIG_DIRECTORY="/etc/apache2se/conf.d"
+# Which user is running Apache web server (if empty, will try to find it)
+APACHE_USER="www-se3"
+# Which group is running Apache web server (if empty, will try to find it)
+APACHE_GROUP="www-data"
+# Where is Apache document root directory (if empty, will try to find it)
+APACHE_ROOT_DOCUMENT="/var/www/se3"
+
+
+# Where are located OCS Communication server log files
+OCS_COM_SRV_LOG="/var/log/ocsinventory-NG"
+# Where is located perl interpreter
+# PERL_BIN=`which perl`
+PERL_BIN="/usr/bin/perl"
+# Where is located make utility
+MAKE="/usr/bin/make"
+# Where is located logrotate configuration directory
+LOGROTATE_CONF_DIR="/etc/logrotate.d"
+ 
+# Which version of mod_perl is apache using,  1 for <= 1.999_21 and 2 for >= 1.999_22 
+# ajout test keyser pour support etch
+if [ "$(cat /etc/debian_version)" == "4.0" ]; then
+APACHE_MOD_PERL_VERSION="2"
+else
+APACHE_MOD_PERL_VERSION="1"
+fi
+
+# Check for Apache web server binaries
+
+echo > setup.log
+echo "Starting OCS Inventory NG Management server setup" >> setup.log
+echo >> setup.log
+
+echo "Using Apache daemon $APACHE_BIN" >> setup.log
+
+# Try to find Apache main configuration file
+echo "Found Apache HTTPD_ROOT $APACHE_ROOT" >> setup.log
+echo "Found Apache SERVER_CONFIG_FILE $APACHE_CONFIG" >> setup.log
+APACHE_CONFIG_FILE_FOUND="$APACHE_ROOT/$APACHE_CONFIG"
+echo "Found Apache main configuration file $APACHE_CONFIG_FILE_FOUND" >> setup.log
+echo "Using Apache main configuration file $APACHE_CONFIG_FILE" >> setup.log
+
+# Try to find Apache main configuration file
+echo "Checking for Apache user account" >> setup.log
+echo "Found Apache user account $APACHE_USER_FOUND" >> setup.log
+# Ask user's confirmation 
+echo "Using Apache user account $APACHE_USER" >> setup.log
+# Try to find Apache main configuration file
+echo "Checking for Apache group" >> setup.log
+echo "Using Apache user group $APACHE_GROUP" >> setup.log
+
+# Setting up Communication server
+echo >> setup.log
+echo "Installing Communication server" >> setup.log
+
+
+echo "Not using Apache Include configuration directory, using file Apache main configuration file $APACHE_CONFIG_FILE." >> setup.log
+
+$PERL_BIN -mmod_perl2 -e 'print "mod_perl 1.99_22 or higher is available\n"' >> setup.log 2>&1
+if test $APACHE_MOD_PERL_VERSION -eq 1
+    then
+        echo "Using mod_perl version 1.99_21 or previous" >> setup.log
+    else
+        echo "Using mod_perl version 1.99_22 or higher" >> setup.log
+fi
+    echo "Checking for Communication server log directory" >> setup.log
+	
+    # jump to communication server directory
+    echo "Entering Apache sub directory" >> setup.log
+    cd "Apache"
+    
+    # Check for required Perl Modules (if missing, please install before)
+    #    - DBI 1.40 or higher
+    #    - Apache::DBI 0.93 or higher
+    #    - DBD::mysql 2.9004 or higher
+    #    - Compress::Zlib 1.33 or higher
+    #    - XML::Simple 2.12 or higher
+    #    - Net::IP 1.21 or higher
+    #
+echo "Checking for DBI PERL module" >> ../setup.log
+$PERL_BIN -mDBI -e 'print "PERL module DBI is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module DBI is not installed !" >> ../setup.log 2>&1
+	echo "Installation aborted !" >> ../setup.log 2>&1
+	exit 1
+else
+	echo "Found that PERL module DBI is available." >> ../setup.log 2>&1
+fi
+	
+echo "Checking for Apache::DBI PERL module" >> ../setup.log
+$PERL_BIN -mApache::DBI -e 'print "PERL module Apache::DBI is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module Apache::DBI is not installed !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+else
+	echo "Found that PERL module Apache::DBI is available." >> ../setup.log
+fi
+
+echo "Checking for DBD::mysql PERL module" >> ../setup.log
+$PERL_BIN -mDBD::mysql -e 'print "PERL module DBD::mysql is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module DBD::mysql is not installed !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+else
+	echo "Found that PERL module DBD::mysql is available." >> ../setup.log
+fi
+
+echo "Checking for Compress::Zlib PERL module" >> ../setup.log
+$PERL_BIN -mCompress::Zlib -e 'print "PERL module Compress::Zlib is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module Compress::Zlib is not installed !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+else
+	echo "Found that PERL module Compress::Zlib is available." >> ../setup.log	
+fi
+
+echo "Checking for XML::Simple PERL module" >> ../setup.log
+$PERL_BIN -mXML::Simple -e 'print "PERL module XML::Simple is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module XML::Simple is not installed !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+else
+	echo "Found that PERL module XML::Simple is available." >> ../setup.log
+fi
+	
+echo "Checking for Net::IP PERL module" >> ../setup.log
+$PERL_BIN -mNet::IP -e 'print "PERL module Net::IP is available\n"' >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+	echo "*** ERROR: PERL module Net::IP is not installed !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+else
+	echo "Found that PERL module Net::IP is available." >> ../setup.log
+fi
+
+
+echo "Configuring Communication server (perl Makefile.PL)" >> ../setup.log
+$PERL_BIN Makefile.PL
+echo "Preparing Communication server Perl modules (make)" >> ../setup.log
+$MAKE >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+        echo "ERROR: Prepare failed (make) Installation aborted !" >> ../setup.log
+        exit 1
+fi
+    
+echo "Installing Communication server Perl modules (make install)" >> ../setup.log
+$MAKE install >> ../setup.log 2>&1
+if [ $? != 0 ]
+then 
+        echo "*** ERROR: Install of Perl modules failed, please look at error in setup.log and fix !" >> ../setup.log
+        echo "Installation aborted !" >> ../setup.log
+        exit 1
+fi
+
+echo "Creating Communication server log directory $OCS_COM_SRV_LOG" >> ../setup.log
+mkdir -p $OCS_COM_SRV_LOG >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+     echo "*** ERROR: Unable to create log directory, please look at error in setup.log and fix !" >> ../setup.log
+fi
+echo "Fixing Communication server log directory permissions" >> ../setup.log
+
+chown -R root:$APACHE_GROUP $OCS_COM_SRV_LOG >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+        echo "*** ERROR: Unable to set log directory permissions, " >> ../setup.log
+fi
+
+chmod -R gu+rwx $OCS_COM_SRV_LOG >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+     echo "*** ERROR: Unable to set log directory permissions !" >> ../setup.log
+fi
+
+chmod -R o-rwx $OCS_COM_SRV_LOG >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+        echo "*** ERROR: Unable to set log directory permissions !" >> ../setup.log
+fi
+
+echo "Configuring logrotate (ed logrotate.ocsinventory-NG)" >> ../setup.log
+cp logrotate.ocsinventory-NG logrotate.ocsinventory-NG.local
+ed logrotate.ocsinventory-NG.local << EOF >> ../setup.log 2>&1
+        1,$ g/^ *PATH_TO_LOG_DIRECTORY*/s#PATH_TO_LOG_DIRECTORY#$OCS_COM_SRV_LOG#
+        w
+        q
+EOF
+
+echo "******** Begin updated logrotate.ocsinventory-NG ***********" >> ../setup.log
+cat logrotate.ocsinventory-NG.local >> ../setup.log
+echo "******** End updated logrotate.ocsinventory-NG ***********" >> ../setup.log
+echo "Writing communication server logrotate to file $LOGROTATE_CONF_DIR/ocsinventory-NG" >> ../setup.log
+
+cp -f logrotate.ocsinventory-NG.local $LOGROTATE_CONF_DIR/ocsinventory-NG >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+        echo "*** ERROR: Unable to configure log rotation  !" >> ../setup.log
+fi
+    
+echo "Configuring Apache web server (ed ocsinventory.conf)" >> ../setup.log
+cp ocsinventory.conf ocsinventory.conf.local
+ed ocsinventory.conf.local << EOF >> ../setup.log 2>&1
+        1,$ g/^ *PerlSetEnv OCS_DB_HOST*/s#DATABASE_SERVER#$DB_SERVER_HOST#
+        1,$ g/^ *PerlSetEnv OCS_DB_PORT*/s#DATABASE_PORT#$DB_SERVER_PORT#
+        1,$ g/^ *PerlSetEnv OCS_MODPERL_VERSION*/s#VERSION_MP#$APACHE_MOD_PERL_VERSION#
+        1,$ g/^ *PerlSetEnv OCS_LOGPATH*/s#PATH_TO_LOG_DIRECTORY#$OCS_COM_SRV_LOG#
+        w
+        q
+EOF
+echo "******** Begin updated ocsinventory.conf ***********" >> ../setup.log
+cat ocsinventory.conf.local >> ../setup.log
+echo "******** End updated ocsinventory.conf ***********" >> ../setup.log
+echo "Writing communication server configuration to file $APACHE_CONFIG_DIRECTORY/ocsinventory.conf" >> ../setup.log
+cp -f ocsinventory.conf.local $APACHE_CONFIG_DIRECTORY/ocsinventory.conf >> ../setup.log 2>&1
+if [ $? != 0 ]
+then
+      echo "*** ERROR: Unable to write $APACHE_CONFIG_DIRECTORY/ocsinventory.conf !" >> ../setup.log
+fi
+        
+echo "Ocs inventory server installation successfull" >> ../setup.log
+
+
+perl -pi -e "s/.*OCS_DB_PWD.*/PerlSetVar OCS_DB_PWD $mdp/" /etc/apache2se/conf.d/ocsinventory.conf
+
+/usr/share/se3/sbin/permse3	
+
+# On relance apache2se
+/etc/init.d/apache2se restart 2>/dev/null
+
+	;;
+	abort-upgrade|abort-remove|abort-deconfigure)
+	;;
+	*)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac 
+
+#DEBHELPER#
+
+exit 0
+
+
