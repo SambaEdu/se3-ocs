@@ -59,7 +59,7 @@ password=$(cat /root/.my.cnf | grep password | cut -d= -f2)
 # Si la base n'existe pas deja on la cree et la remplie
 # Si elle existe on l'a met a jour
 
-mysql -h localhost -u root -p$password --force < /usr/share/ocsinventory-server/ocsreports/files/ocsbase.sql 2>/dev/null
+mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase.sql 2>/dev/null
 mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase-se3.sql 2>/dev/null
 
 mysql -h localhost -u root -p$password -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY '$mdp'";
