@@ -91,7 +91,8 @@ if [ -x /usr/share/se3/sbin/permse3 ]
 then
     /usr/share/se3/sbin/permse3
 else
-    if [ -x /usr/share/se3/scripts/permse3 ] 
+    if [ -x /usr/share/se3/scripts/permse3 ]
+    then 
 	/usr/share/se3/scripts/permse3
     fi
 fi
