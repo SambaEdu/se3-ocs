@@ -2,11 +2,12 @@ Source: se3-ocs
 Section: misc
 Priority: extra
 Maintainer: plouf <plouf@sambaedu.org>
+Uploaders: Laurent COOPER <laurent@ac-grenoble.fr>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
 Package: se3-ocs
-Architecture: any
+Architecture: all
 Depends: se3 (>= 0.98), ocsinventory-server
 Description: Install ocs-ng for se3
  This package add ocs-inventory-NG fo se3
