@@ -2,8 +2,9 @@ se3-ocs (0.1-6) lenny; urgency=low
 
   * Added myself as uploader
   * Changed the architecture from any to all for amd64 compatibility
+  * Corrected two minor bugs in postinst
 
- -- Laurent COOPER <laurent@ac-grenoble.fr>  Fri, 27 Aug 2010 15:33:41 +0200
+ -- Laurent COOPER <laurent@ac-grenoble.fr>  Fri, 27 Aug 2010 15:57:05 +0200
 
 se3-ocs (0.1-5) unstable; urgency=low
 

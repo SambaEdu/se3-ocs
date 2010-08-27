@@ -45,7 +45,7 @@ fi
 # On teste si la base existe deja et si on a le mot de passe (version etch)
 if [ -e $WWWPATH/se3/includes/dbconfig.inc.php ] 
 then
-	MAJ_OCS = 1
+	MAJ_OCS=1
 fi
 
 # Creation du mdp
@@ -87,8 +87,14 @@ fi
 
 perl -pi -e "s/.*OCS_DB_PWD.*/PerlSetVar OCS_DB_PWD $mdp/" /etc/ocsinventory/ocsinventory.conf
 
-
-/usr/share/se3/sbin/permse3	
+if [ -x /usr/share/se3/sbin/permse3 ] 
+then
+    /usr/share/se3/sbin/permse3
+else
+    if [ -x /usr/share/se3/scripts/permse3 ] 
+	/usr/share/se3/scripts/permse3
+    fi
+fi
 
 # On relance apache2se
 /etc/init.d/apache2se restart 2>/dev/null
