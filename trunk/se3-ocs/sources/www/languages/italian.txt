@@ -1,0 +1,450 @@
+2 Tutti i computers
+3 Computers con software...
+5 Apparati di cui sono responsabile
+9 Ricerca varia
+12 Valore etichetta
+13 Invia
+17 Agente
+19 Versione software
+20 Software
+23 Computer
+24 Utente
+25 Sistema Operativo
+26 Memoria
+27 Velocita memory (MHz)
+28 Numero di macchine
+30 Ricerca
+31 Scegli un parametro
+32 Scelta
+33 Dominio
+34 Indirizzo IP
+35 Nome Computer
+36 Numero di Serie
+41 Reset
+42 Non ci sono risultati
+43 Menù principale
+45 Free space
+46 Ultimo inventario
+48 Dettagli Computer
+49 Nome
+50 Scambio
+51 Commenti
+53 Descrizione 
+54 Processori
+55 Numero
+56 Dati Informativi
+61 Scheda Video
+62 Risoluzione
+63 Unità di memorizzazione
+64 Fabbricante
+65 Modello
+66 Tipo
+67 Capacità disco
+69 Editor
+70 Utilizzo
+79 Stampanti
+80 Didascalia
+81 Stato
+82 Reti
+83 Capacità
+84 Interfaccia
+85 Lettera
+86 File system
+87 Totale
+88 Libero
+90 Risultato
+91 Dispositivi di input
+92 Dischi
+93 Controllore
+94 Slot number
+95 MAC address
+96 Suono
+97 Monitor(s)
+98 Attenzione, si possono selezionare solo 8 opzioni !
+99 Dettagli del Computer
+103 Aggiorna
+107 Configurazione
+108 Richiesta registro
+111 Licenza Windows
+113 Cancella
+114 Registra
+115 Aggiorna
+116 Aggiungi
+117 Registro
+119 Vuoi veramente cancellare l'ID n° 
+122 Cancella
+129 UGUALE
+130 DIFFERENTE
+134 Aggiungi un nuovo file nel database
+135 Attenzione, si sta per effettuare una cancellazione DEFINITIVA !
+136 Scarica
+137 File
+168 Il formato del file non è valido (deve essere zip, pl o unix binario)
+170 Il file è già esistente !
+171 File cancellato
+172 Errore, il file
+173 non è stato aggiunto al database
+174 Sicurezza
+175 Duplicati
+176 Ips
+177 Unisci i computers duplicati
+178 Etichetta / Numero di ripartizione PC
+180 Utente non registrato
+182 I Computers hanno un'etichetta assegnata
+183 Scarica
+184 Questo file non contiene \"use constant version\"
+185 La versione deve essre maggiore della 1
+186 Il file non contiene la versione
+187 Questo non è un file zip valido
+188 Indietro
+189 Bisogna selezionare almeno 2 computers 
+190 Resoconto:
+191 cancellato
+192 Sommario duplicazioni
+193 Nome computer + Numero di serie
+194 Nome computer + Mac address
+195 Mac address + Numero di serie
+196 Solo nome computer
+197 Solo numero di serie
+198 Solo Mac address
+199 Duplicazione
+200 Corresponding relay decremented
+201 MINORE DI
+202 MAGGIORE DI
+203 TRA
+204 AL DI FUORI
+205 Abilitato
+206 Salvato da
+207 Gateway
+208 mask
+209 Versione BIOS
+210 Data BIOS
+211 Registro
+212 Nome chiave
+213 Valore chiave
+214 Stampa la pagina corrente
+215 Mostra tutto
+216 Password ERRATA
+217 Password
+218 Versione Agente
+219 Interfacce di rete non inventariate
+220 cancellato
+221 Acquisizione indirizzi IP dei computers
+222 ATTENZIONE ! Tutti i computers selezionati saranno unificati in un singolo computer ! SEI SICURO ?
+223 Informazioni
+224 Valore
+225 Informazioni amministrative
+226 è stato cancellato dalla tabella delle informazioni amministrative
+227 Sei sicuro di voler cancellare la colonna
+228 Insirisci la nuova informazione
+229 Testo (255)
+230 Numero
+231 Reale
+232 Data
+233 Tipo attuale
+234 è stato inserito con successo
+235 Utenti
+236 Cambio password
+237 Nuova password
+238 Conferma
+239 Bisogna riempire ogni campo
+240 Le password sono differenti
+241 La password è stata modificata con successo
+242 Amministratore
+243 Utente
+244 Aggiungi un nuovo utente
+245 è stato cancellato con successo
+246 Sei sicuro di voler cancellare l'utente
+247 MySql Utente
+248 MySql password
+249 Impossibile connettersi a MySql. Inserire un utente e una password validi.
+250 MySql NomeServer
+251 Uscita
+252 Nome (scelto)        	
+253 Contenitore registro	
+254 Percorso della chiave (Es: SOFTWARE\Mozilla)  	
+255 Nome della chiave che si vuole leggere (* per tutte)
+256 Scelta
+257 Chiave registro
+258 Valore chiave registro
+259 Errore, il dato non può essere inserito (i caratteri speciali non sono ammessi)
+260 La descrizione del file è stata modificata con successo
+261 La descizione del file è stata cancellata con successo
+262 Tipo nell'etichetta
+263 Configurazione del file delle etichette
+264 Non esiste nessun file delle etichette
+265 Qualsiasi
+266 Data non valida
+267 gg/mm/aaaa
+268 Velocità
+269 %m/%d/%Y
+270 Modem(s)
+271 Slot(s)
+272 Porte
+273 BIOS
+274 Name Sistema Operativo
+275 Versione Sistema Operativo
+276 Chipset
+277 Versione
+278 Driver
+279 Porta
+280 Tipo MIB 
+281 Indirizzo DHCP IP
+282 Gateways
+283 Scopo
+284 Costruttore BIOS
+285 Selezionare un parametro da modificare
+286 Service pack
+287 Local import
+288 Local Importation
+289 Informazione di rete
+290 Ricerca indirizzi Ip
+291 Modalità esportazione
+292 Aggiungi / Cancella un'unità di rete
+293 Tipi di unità di rete
+294 Nomi subnets di rete
+295 Localizzazione
+296 Uid
+297 Non è possibile scrivere nella cartella
+298 Tutti i campi devono essere riempiti
+299 Indirizzo IP errato (deve essere: x.x.x.x)
+300 Maschera errata: deve essere: x.x.x.x or xx (xx<32)
+301 La rete è stata inserita
+302 La rete è stata cancellata
+303 Aggiungi una subnet
+304 Nome rete
+305 Uid
+306 Elenco Subnet
+307 Aggiungi un tipo
+308 Nome tipo
+309 Tipi apparati di rete
+310 IpDiscover minore di
+311 Apparati
+312 IpDiscover
+313 Gateway computers
+314 IpDiscover gateway computers
+315 Computers non inventariati
+316 Subnet
+317 ANALIZZA
+318 Nome DNS
+319 Risultati dell'analisi di rete
+320 Questa analisi è già stata eseguita
+321 vuoi vedere le informazioni memorizzate ?
+322 Informazioni memorizzate
+323 generate da
+324 APPARATI ANALIZZATI COME
+325 vuoto
+326 non è stata inserita la maschera
+327 Dettagli Computer
+328 Ricercati
+329 Inventariati
+330 Nome NetBIOS
+331 Numero di Rete
+332 Attendere prego...
+333 Aggiungi un nuovo apparato
+334 Elenco apparati
+335 Tipo apparato
+336 Descrizione apparato
+337 IL PROGRAMMA NON HA INVIATO NULLA
+338 Modalità limitata
+339 Serve ipdiscover-util.pl (solo Linux ) in modalità esperta
+340 Visualizza
+340 Righe
+341 Non è possibile eseguire, bisogna inserire i diritti di esecuzione
+342 Bisogna avere i diritti di scrittura sulla cartella root per usarlo
+344 Errore
+345 L'ANALISI E' ANCORA IN ESECUZIONE, RIPROVARE TRA QUALCHE MINUTO
+346 PRIMA
+347 DOPO
+348 Utente Windows
+349 Aggiungi Colonna
+350 Tipo processore
+351 Numero processori
+352 Ultimo inserito
+353 Qualità
+354 Fedeltà
+355 Società
+356 Proprietario
+357 Utente agente
+358 Jolli: ? (un carattere), * (diversi caratteri)
+359 Numero di serie del Monitor
+360 Costruite nel (settimana/anno)
+362 La rete
+363 esiste già
+364 Inventariato
+365 Non- inventariato
+366 Identificato
+367 Apparati di rete
+368 di rete
+369 Eseguito da
+370 Distibuito
+371 All components
+372 Choose the components
+373 Registered user
+374 Registered society
+375 OCS NG Agent Vesion
+376 Computer locked. Please retry in a few minutes
+377 Processor Speed (Mhz)
+380 Dictionnary
+381 Number
+382 Software name
+383 The page
+384 Move ALL
+385 to a new category
+386 OR
+387 to an existing category
+388 Category
+389 Nothing
+390 Dictionnary categories
+391 Category name
+392 Delete
+393 Search
+394 Search Category
+395 Search software EVERYWHERE
+396 Reset
+397 Go to the category
+398 Categories list
+410 EXACTLY
+411 Fields must contain only numbers !
+412 Enable/disable the registry key gathering functionality
+413 Enable/disable the automatic update functionality
+414 Enable/disable the automatic deployment functionality
+415 Enable/disable the deletion logging functionality (needed by GLPI).
+416 Enable/disable the logging functionality.
+417 Enable/disable the automatic software distribution functionality.
+418 Enable/disable the differentiate inventories functionality.
+419 Maximum number of day before an ipdiscover computer is replaced.
+420 Automatic software distribution: see documentation.
+421 Automatic software distribution: see documentation.
+422 Automatic software distribution: see documentation.
+423 Automatic software distribution: see documentation. (Packages with a higher or equals priority won't be downloaded anymore).
+424 Maximum number of days before a package to be downloaded on a computer become obsolete.
+425 Max number of computers per gateway retrieving IP on the network.
+426 Specify the frequency (days) of inventories. (0: inventory at each login. -1: no inventory)
+427 Defines criteria that must be equals for two computers to be automatically merged.
+428 Deploy
+429 Frequency
+430 Mass processing
+431 Activate
+432 Non notified
+433 Affect
+434 Package builder
+435 New package building
+436 Can't open file
+437 Your package was successfully created in the directory
+438 New package building
+439 Protocol
+440 Priority
+441 Digest algorithm
+442 Digest encoding
+443 Action
+444 Command
+445 Path
+446 File name
+447 User notifications
+448 Warn user
+449 Text
+450 Countdown
+451 User can abort
+452 User can delay
+453 Installation completion need user action
+454 NO
+455 YES
+456 Execute
+457 Store
+458 Launch
+459 Countdown must be a number
+460 Unique identifier
+461 Digest
+462 Total size
+463 Fragments size (1 KB min)
+464 Fragments number
+465 Package activation
+466 WARNING: Can't find information file at
+467 WARNING: Can't find fragments files at
+468 Are you sure to want to activate this package ?
+469 Package activated, it can now be affected
+470 Https url
+471 Fragments url
+472 ERROR: Can't delete directory
+473 Timestamp must be a number
+474 Timestamp must be 10 digits long
+475 Timestamp
+476 Or activate a package manually
+477 Affect a package
+478 Computer(s)
+479 No computer selected
+480 fragments
+481 Activated packages
+482 WAITING NOTIFICATION
+483 Validate SUCCESSES
+484 Affect a custom frequency
+485 Always inventoried
+486 Never inventoried
+487 Custom
+488 Default
+489 IpDiscover behaviour
+490 NEVER IpDiscover
+491 ALWAYS IpDiscover of network
+492 ELECTED IpDiscover of network
+493 Default (can be elected)
+494 Custom inventory frequency
+495 Inventoried every 
+496 day(s)
+497 Default, uses the 'FREQUENCY' parameter.
+498 Package
+499 server
+500 Customization
+501 add package
+502 Elected
+503 Force elected
+504 Not elected
+505 Electable
+506 Not electable
+507 HAVING
+508 NOT HAVING
+509 ANY
+510 No package
+511 seconds
+512 Deployment
+513 Build
+514 Activate
+515 Activated
+516 KB
+517 This option can only be affected to one computer at a time.
+518 Force IpDiscover
+519 Computer already elected for network
+520 Computer already FORCED ipdiscover for network
+521 Computer already FORCED unelectable
+522 Standard computer
+523 Revert back to standard state
+524 NEVER affect again
+525 ARE YOU SURE ?
+526 NO COMPUTER AFFECTED
+527 January
+528 February
+529 March
+530 April
+531 May
+532 June
+533 July
+534 August
+535 September
+536 October
+537 November
+538 December
+539 Sunday
+540 Monday
+541 Tuesday
+542 Wednesday
+543 Thursday
+544 Friday
+545 Saturday
+546 in state
+547 all
+548 All but SUCCESS
+549 File (deployed on client computers)
+550 File (not mandatory, may be used by "execute" commmand)
+551 This package name already exists
+552 <i>You must make a computer search, and then click 'deploy' to affect these activated packages<br>You may also affect a package to a single computer by using the 'customization' tab of any computer details</i>.
+553 Windows key
