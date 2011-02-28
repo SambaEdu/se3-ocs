@@ -13,7 +13,7 @@ fi
 set -e 
 SE3MODULE="se3-ocs"
 PATH_SVN_LOCAL="/digloo/deb/se3/"
-PATH_SE3MODULE="${PATH_SVN_LOCAL}${SE3MODULE}/trunk"
+PATH_SE3MODULE="$(pwd)"
 
 
 SOURCE_DIR="sources"
@@ -61,15 +61,15 @@ echo -e "$COLTXT"
 	fi
 }
 
+
 svn update $PATH_SE3MODULE || exit 1
-rm -rf ./workdir
-mkdir -p ./workdir/
-cp -a "$PATH_SE3MODULE"/* ./workdir/
-cd ./workdir/
+
+cp -a "$PATH_SE3MODULE" /tmp/
+cd /tmp/
 
 echo "Suppression reps .svn"
-POURSUIVRE
-find ./ -name .svn -print0 | xargs -0 rm -r
+
+find ./$SE3MODULE -name .svn -print0 | xargs -0 rm -r
 
 # echo "traitement utf8 pour etch"
 # if [ "$DISTRIB" == "etch" ]; then
@@ -83,21 +83,21 @@ find ./ -name .svn -print0 | xargs -0 rm -r
 
 echo "construction du paquet $SE3MODULE"
 POURSUIVRE
-# cd $SOURCE_DIR
-# chmod +x ./scripts/*
+cd $SE3MODULE/$SOURCE_DIR
+chmod +x ./scripts/*
 dh_clean
 debuild -uc -us -b
-# cd ..
-# mv *.deb ..
-# cd ..
-# rm -rf workdir
-
+cd ..
+cp *.deb "$PATH_SE3MODULE"/
+cd /tmp
+rm -rf $SE3MODULE
+cd $PATH_SE3MODULE
 
 echo "copie sur le dépot se3$OPT du paquet $SE3MODULE pour la branche $BRANCHE"
 POURSUIVRE
 # scp -P 2222 $SE3MODULE*.deb root@wawadeb:/var/ftp/debian/dists/stable/se3XP/binary-i386/net/
 
-cd ..
+
 if [ "$DISTRIB" == "etch" -o "$DISTRIB" == "all" ]; then
 	scp -P 2222 $SE3MODULE*.deb root@wawadeb:/var/ftp/debian/dists/etch/se3$OPT/binary-i386/net/
 	[ "$BRANCHE" == "all" ] && scp -P 2222 $SE3MODULE*.deb root@wawadeb:/var/ftp/debian/dists/etch/se3/binary-i386/net/
