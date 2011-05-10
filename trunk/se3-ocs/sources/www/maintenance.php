@@ -514,11 +514,13 @@ if (($action=="change") or ($action=="all") or ($action=="moi") or ($action=="af
     	echo "<INPUT TYPE=\"text\" NAME=\"filtrecomp\"\n VALUE=\"$filtrecomp\" SIZE=\"8\">";
         echo "<input type=\"submit\" value=\"Chercher\">\n";
         echo "</FORM>\n";
+        // Initialisation
+        $list_new_machines=array();
         // Lecture des membres du parc
         $mp=gof_members($parc,"parcs",1);
         // Creation d'un tableau des  machines
-        if ($filtrecomp == '') $filtrel = '*';
-        else $filtrel = "*$filtrecomp*";
+        if ($filtrecomp == '') {$filtrel = '*';}
+        else {$filtrel = "*$filtrecomp*";}
         $list_machines=search_machines("(&(cn=$filtrel)(objectClass=ipHost))","computers");
         // tri des machines d�a pr�entes dans le parc
         $lmloop=0;
@@ -527,17 +529,17 @@ if (($action=="change") or ($action=="all") or ($action=="moi") or ($action=="af
              $loop1=0;
              $mach=$list_machines[$loop]["cn"];
              while (("$mp[$loop1]" != "$mach") && ($loop1 < $mpcount)) $loop1++;
-               if ("$mp[$loop1]" != "$mach") $list_new_machines[$lmloop++]=$mach;
+               if ("$mp[$loop1]" != "$mach") {$list_new_machines[$lmloop++]=$mach;}
          }
          // Affichage menu de s�ection des machines �ajouter au parc
-         if  ( count($list_new_machines)>10) $size=10; else $size=count($list_new_machines);
+         if  ( count($list_new_machines)>10) {$size=10;} else {$size=count($list_new_machines);}
          if ( count($list_new_machines)>0) {
          	echo "<form action=\"maintenance.php\" method=\"GET\" name=\"ajout_form\">\n";
                 echo"<p>".gettext("S&#233;lectionnez une machine &#224; signaler &#224; la maintenance :")."</p>\n";
                 echo "<p><select size=\"".$size."\" name=\"mpenc\">\n";
                 for ($loop=0; $loop < count($list_new_machines); $loop++) {
                 	echo "<option value=\"".$list_new_machines[$loop]."\"";
-            		if ($list_new_machines[$loop] == $row[0]) { echo "selected"; }  
+            		if ($list_new_machines[$loop] == $row[0]) { echo "selected"; }
             		echo ">".$list_new_machines[$loop]."</option>\n";
         	}
         	echo "</select></p>\n";
