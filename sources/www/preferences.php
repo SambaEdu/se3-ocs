@@ -445,7 +445,7 @@ function ShowResults($req,$sortable=true,$modeCu=false,$modeRedon=false,$deletab
 							echo "$hrefSort<img src='image/up.png'></a></td>";
 					}
 					else {
-						ereg( "\"? *([^\"]*)\"? (DESC|ASC)", $_SESSION["storedRequest"]->order, $res);
+						mb_ereg( "\"? *([^\"]*)\"? (DESC|ASC)", $_SESSION["storedRequest"]->order, $res);
 						//echo "colname:".$colname->name."vrainomchamp:".$vraiNomChamp;
 						//var_dump( $res );	
 						
