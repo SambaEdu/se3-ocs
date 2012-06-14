@@ -84,7 +84,7 @@ greater than $MaxAvail.<br>You must raise both post_max_size and upload_max_file
 
 include ('fichierConf.class.php');
 
-$l = new FichierConf("english"); // on crée l'instance pour avoir les mots dans la langue choisie
+$l = new FichierConf("english"); // on crï¿½e l'instance pour avoir les mots dans la langue choisie
 if( isset($_POST["name"])) {
 		if( (!$link=@mysql_connect($_POST["host"],$_POST["name"],$_POST["pass"]))) {
 		$firstAttempt=false;
@@ -386,7 +386,7 @@ else {
 		$masqueValide = "(($ipValide|$masqueEntier)[ ]*$)";
 		$exp = $ipValide."[ ]*/[ ]*".$masqueValide;
 
-		if( ereg($exp,$data[2],$res) ) {
+		if( preg_match("/$exp/",$data[2],$res) ) {
 			
 			if( @mysql_query("INSERT INTO subnet(netid, name, id, mask) 
 			VALUES ('".$res[1]."','".$data[0]."','".$data[1]."','".$res[4]."')") ) {
