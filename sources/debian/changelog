@@ -1,3 +1,9 @@
+se3-ocs (0.1-11) unstable; urgency=low
+
+  * correction ereg
+
+ -- root <root@DevilXen>  Thu, 14 Jun 2012 22:58:03 +0200
+
 se3-ocs (0.1-10) unstable; urgency=low
 
   * installation os 64b
