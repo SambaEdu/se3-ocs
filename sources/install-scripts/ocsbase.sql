@@ -1,5 +1,5 @@
--- CREATE DATABASE ocsweb;
--- USE ocsweb;
+CREATE DATABASE ocsweb;
+USE ocsweb;
 
 
 CREATE TABLE hardware (
@@ -617,5 +617,5 @@ INSERT INTO `config` VALUES ('LOCAL_PORT', 80, '', 'Server port used for local i
 
 INSERT INTO `operators` VALUES ('admin','admin','admin','admin',1, 'Default administrator account');
 
--- GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY 'ocs';
--- GRANT ALL PRIVILEGES ON ocsweb.* TO ocs@localhost IDENTIFIED BY 'ocs';
+GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY 'ocs';
+GRANT ALL PRIVILEGES ON ocsweb.* TO ocs@localhost IDENTIFIED BY 'ocs';
