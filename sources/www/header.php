@@ -1,211 +1,498 @@
-<?
+<?php
 //====================================================================================
 // OCS INVENTORY REPORTS
-// Copyleft Pierre LEMMET 2005
-// Web: http://ocsinventory.sourceforge.net
+// Copyleft Erwan GOALOU 2010 (erwan(at)ocsinventory-ng(pt)org)
+// Web: http://www.ocsinventory-ng.org
 //
 // This code is open source and may be copied and modified as long as the source
 // code is always made freely available.
 // Please refer to the General Public Licence http://www.gnu.org/ or Licence.txt
 //====================================================================================
-//Modified on 12/13/2005
+// UPDATED FOR SE3 BY LAURENT JOLY 19-03-2016
 
-error_reporting(E_ALL & ~E_NOTICE);
-set_time_limit(0);
+if (!isset($debut))
+die('FORBIDDEN');
+
+unset($_SESSION['OCS']['SQL_DEBUG']);
+
+// Before session_start to allow objects to be unserialized from session
+require_once('require/menu/include.php');
+require_once('require/config/include.php');
 
 @session_start();
+error_reporting(E_ALL & ~E_NOTICE);
 
-include("preferences.php");
-
-// Ajout Se3 pour l'authentification
-require_once("config.inc.php");
-require_once("functions.inc.php");
+/********************************************SPECIFIC SE3********************************************/
+// Ajout Se3 pour l'authentification 
+require_once("../includes/config.inc.php");
+require_once("includes/functions.inc.php");
 $login =isauth();
 
-//aide
-$_SESSION["pageaide"]="L%27inventaire#Nouvelle_version_.28.3E_1.0_ocsinventory-NG.29";
+// chemin pour ocsreports
+$pathocs=$path_to_wwwse3."/ocsreports";
+chdir($pathocs);
 
 // Si pas se3_is_admin
-if ((ldap_get_right("se3_is_admin",$login)=="Y") || (ldap_get_right("computers_is_admin",$login)=="Y") || (ldap_get_right("inventaire_can_read",$login)=="Y") || (ldap_get_right("parc_can_manage",$login)=="Y"))  {
- print "<H3 ALIGN=RIGHT><FONT color=#6699cc>Bonjour $login (niveau ";
- $intlevel=getintlevel();
- switch ($intlevel) {
-	case 1:
-		echo gettext("Débutant");
-		break;
-	case 2:
-		echo gettext("Intermédiaire");
-		break;
-	case 3:
-		echo gettext("Confirmé");
-		break;
-	case 4:
-		echo gettext("Expérimental");
-		break;
-}
-echo ")</FONT></H3>";
+if ((ldap_get_right("se3_is_admin",$login)=="Y") || (ldap_get_right("computers_is_admin",$login)=="Y") || (ldap_get_right("inventaire_can_read",$login)=="Y") || (ldap_get_right("parc_can_manage",$login)=="Y"))
+{
 
-// On se reconnecte à ocsweb
-dbconnect();
-  // update checking
- /*$resUpd = @mysql_query("SELECT tvalue FROM config WHERE name='GUI_VERSION'", $_SESSION["readServer"]) or die(mysql_error($_SESSION["readServer"]));
- $valUpd = @mysql_fetch_array($resUpd);
- if( !$valUpd || $valUpd["tvalue"]<GUI_VER ) {
-	$fromAuto = true;
-	include('install.php');
+/********************************************FIND SERVER URL****************************************/
+$addr_server=explode('/',$_SERVER['HTTP_REFERER']);
+array_pop($addr_server);
+define("OCSREPORT_URL",implode('/',$addr_server));
+
+if ($_SESSION['OCS']['LOG_GUI'] == 1){	
+		define("LOG_FILE",$_SESSION['OCS']['LOG_DIR']."log.csv");
+	}
+
+require_once('var.php');
+require_once('require/fichierConf.class.php');
+require_once('require/function_commun.php');
+require_once('require/aide_developpement.php');
+require_once('require/function_table_html.php');
+require_once('require/views/forms.php');
+require_once('require/plugin/include.php');
+
+if (isset($_SESSION['OCS']['CONF_RESET'])){
+	unset($_SESSION['OCS']['LOG_GUI']);
+	unset($_SESSION['OCS']['CONF_DIRECTORY']);
+	unset($_SESSION['OCS']['URL']);
+	unset($_SESSION['OCS']["usecache"]);
+	unset($_SESSION['OCS']["use_redistribution"]);
+	unset($_SESSION['OCS']['CONF_RESET']);
+}
+
+//If you have to reload conf
+if ($_POST['RELOAD_CONF'] == 'RELOAD'){
+	$_SESSION['OCS']['CONF_RESET']=true;
+}
+
+
+
+/*****************************************************LOGOUT*********************************************/
+if (isset($_POST['LOGOUT']) and $_POST['LOGOUT'] == 'ON'){
+	//Contrib of FranciX (http://forums.ocsinventory-ng.org/viewtopic.php?pid=41923#p41923)
+	if($_SESSION['OCS']['cnx_origine'] == "CAS"){
+		require_once(PHPCAS);
+		require_once(BACKEND.'require/cas.config.php');
+		$cas=new phpCas();
+		$cas->client(CAS_VERSION_2_0,$cas_host,$cas_port,$cas_uri);
+		$cas->logout();		
+	}
+	//end contrib
+	unset($_SESSION['OCS']);
+	unset($_GET);
+}
+/***************************************************** First installation checking *********************************************************/
+if( (!is_readable(CONF_MYSQL)) 
+		|| (!function_exists('session_start')) 
+		|| (!function_exists('mysqli_connect')) ) {
+	require('install.php');	
 	die();
- }//
-
- //if(isset($_GET["logout"])) {
-	foreach( $_SESSION as $key=>$val) {		
-		unset($_SESSION[$key]);
-	}
- //}
- */
- if( isset($_GET["first"] )) {
-	unset( $_SESSION["lareq"] );
-	unset( $_SESSION["lareqpages"] );
- }
-
-
- ?>
-<html>
-<head>
-<TITLE>OCS Inventory</TITLE>
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-<LINK REL='StyleSheet' TYPE='text/css' HREF='css/ocsreports.css'>
-<? incPicker(); ?>
-<script language='javascript'>
-<?if($_GET["multi"] == 3 && $_GET["mode"] == 1) {?>
-	function scrollHeaders() {
-		var monSpan = document.getElementById("headers");
-		if( document.body.scrollTop > 200) {
-			monSpan.style.top = (( Math.ceil(document.body.scrollTop / 27)) * 27) + 3<?
-	if( getBrowser() == "MOZ" )
-		echo " - 17 + 27;\n";
-?>			
-			monSpan.style.visibility = 'visible';
-			// 15 Netsc 8ie
-		}
-		else
-			monSpan.style.visibility = 'hidden';
-	}
-<?}?>
-	
-	function wait( sens ) {	
-		var mstyle = document.getElementById('wait').style.display	= (sens!=0?"block" :"none");	
-	}
-
-</script>
-</head> 
-<STYLE>
-body{
-    background: url(/elements/images/fond_SE3.png) ghostwhite bottom right no-repeat fixed;
-    }
-</STYLE>
-    
-<?
-echo "<body bottommargin='0' leftmargin='0' topmargin='0' rightmargin='0' marginheight='0' marginwidth='0'";
-if( $_GET["multi"] ==3 && $_GET["mode"] == 1) {
-	echo " OnScroll='javascript:scrollHeaders()'";
-	if( getBrowser()=="MOZ")
-		echo " OnMouseMove='javascript:scrollHeaders()'";
 }
-echo ">";
+else{	
+	require_once(CONF_MYSQL);
+}
 
-/* se3
-if( !isset($_GET["popup"] )) {
-?>
-<table class='headfoot' border='0'>
-<tr height=25px>
-	<td><a href='index.php?first'><img src='image/logo OCS-ng-48.png'></a></td>
-	<td align='center' width='33%'><a href='index.php?first'><img src=image/banner-ocs.png></a></td><td width='33%' align='right'>
-	<b>Ver. <?=GUI_VER?>&nbsp&nbsp&nbsp;</b>	
-<?
+if (!defined("SERVER_READ") 
+		|| !defined("DB_NAME") 
+		|| !defined("SERVER_WRITE") 
+		|| !defined("COMPTE_BASE")
+		|| !defined("PSWD_BASE")){
+	$fromdbconfig_out = true;
+	require('install.php');
+	die();	
+}
+
+//connect to databases
+$link_write=dbconnect(SERVER_WRITE,COMPTE_BASE,PSWD_BASE);
+$link_read=dbconnect(SERVER_READ,COMPTE_BASE,PSWD_BASE);
+//p($link_write);
+if (is_object($link_write) and is_object($link_read)) {
+	$_SESSION['OCS']["writeServer"] = $link_write;	
+	$_SESSION['OCS']["readServer"] = $link_read;
+}else{
+	if ($link_write == "NO_DATABASE" or $link_read == "NO_DATABASE"){
+		require('install.php');
+		die();
 	}
-*/
-/* se3	if(isset($_POST["subLogin"])) {				
-		$req="SELECT id, accesslvl, passwd FROM operators WHERE id='".$_POST["login"]."'";
-		
-		$res=mysql_query($req,$_SESSION["readServer"]) or die(mysql_error());
-		
-		if($row=@mysql_fetch_object($res))
-		{
-                     // DL 25/08/2005
-			// Support new MD5 encrypted password or old clear password for login only						
-			if (($row->passwd != md5( $_POST["pass"])) and
-			    ($row->passwd != $_POST["pass"])) {
-				$err = "</tr></table><br><center><font color=red><b>".$l->g(216)."</b></font></center>";
-				unset($_SESSION["loggeduser"],$_SESSION["lvluser"]);				
-			}
-			else {
-*/			
-		//		$_SESSION["loggeduser"]=$row->id;
-		//		$_SESSION["lvluser"]=$row->accesslvl;	
+	$msg='';
+	if (!is_object($link_write))
+		$msg.=$link_write."<br>";
+	if (!is_object($link_read))
+		$msg.=$link_read;
+	html_header(true);
+	msg_error($msg);
+	require_once(FOOTER_HTML);
+	die();
+}
 
-				$_SESSION["loggeduser"]="$login";
-				$_SESSION["lvluser"]=1;	
+/***********************************************************LOGS ADMIN*************************************************************************/
+if (!isset($_SESSION['OCS']['LOG_GUI'])){
+	$values=look_config_default_values(array('LOG_GUI','LOG_DIR','LOG_SCRIPT'));
+	$_SESSION['OCS']['LOG_DIR'] = $values['tvalue']['LOG_DIR'];
+	if ($_SESSION['OCS']['LOG_DIR']) {
+		$_SESSION['OCS']['LOG_DIR'] .='/logs/';
+	} else {
+		$_SESSION['OCS']['OLD_CONF_DIR'] = VARLOG_DIR.'/logs/';
+	}
+	$_SESSION['OCS']['LOG_GUI'] = $values['ivalue']['LOG_GUI'];
+	if ($_SESSION['OCS']['LOG_SCRIPT']) {
+		$_SESSION['OCS']['LOG_SCRIPT'] .="/scripts/";		
+	} else {
+		$_SESSION['OCS']['OLD_CONF_DIR'] = VARLOG_DIR.'/scripts/';
+	}
+}
+/****************END LOGS***************/
+
+/***********************************************************CONF DIRECTORY*************************************************************************/
+if (!isset($_SESSION['OCS']['CONF_PROFILS_DIR'])){
+	$values=look_config_default_values(array('CONF_PROFILS_DIR','OLD_CONF_DIR'));
+	$_SESSION['OCS']['OLD_CONF_DIR'] = $values['tvalue']['OLD_CONF_DIR'];
+	if ($_SESSION['OCS']['OLD_CONF_DIR']) {
+		$_SESSION['OCS']['OLD_CONF_DIR'] .='/old_conf/';
+	} else {
+		$_SESSION['OCS']['CONF_PROFILS_DIR'] = ETC_DIR.'/'.MAIN_SECTIONS_DIR.'old_conf/';
+	}
+
+	$_SESSION['OCS']['CONF_PROFILS_DIR'] = $values['tvalue']['CONF_PROFILS_DIR'];
+	if ($_SESSION['OCS']['CONF_PROFILS_DIR']) {
+		$_SESSION['OCS']['CONF_PROFILS_DIR'] .='/conf/';
+	} else {
+		$_SESSION['OCS']['CONF_PROFILS_DIR'] = ETC_DIR.'/'.MAIN_SECTIONS_DIR.'conf/';
+	}
+
+}
+/****************END LOGS***************/
 
 
-/*se3			}
+
+
+
+/******************************************Checking sql update*********************************************/
+if (!isset($_SESSION['OCS']['SQL_BASE_VERS'])){
+	$values=look_config_default_values('GUI_VERSION');
+	$_SESSION['OCS']['SQL_BASE_VERS']=$values['tvalue']['GUI_VERSION'];
+}
+if (GUI_VER	!= $_SESSION['OCS']['SQL_BASE_VERS']){
+	$fromAuto = true;
+		if ($_SESSION['OCS']['SQL_BASE_VERS'] < 7006){
+			unset($_SESSION['OCS']['SQL_BASE_VERS']);
+			require('install.php');
+		}else
+			require('update.php');
+	die();	
+}
+
+if (!defined("SERVER_READ")){
+	$fromdbconfig_out = true;
+	require('install.php');
+	die();	
+}
+
+//SECURITY
+$protectedPost=strip_tags_array($_POST);
+$protectedGet=strip_tags_array($_GET);
+
+@set_time_limit(0);
+
+//Don't take care of error identify 
+//For the fuser, $no_error  = 'YES'
+if (!isset($no_error))
+$no_error='NO';
+
+/****************************************************SQL TABLE & FIELDS***********************************************/
+
+if (!isset($_SESSION['OCS']['SQL_TABLE'])){
+	$sql="show tables from %s";
+	$arg=DB_NAME;
+	$res=mysql2_query_secure($sql,$_SESSION['OCS']["readServer"],$arg);
+	while($item = mysqli_fetch_row($res)){
+		$sql="SHOW COLUMNS FROM %s";
+		$arg=$item[0];
+		$res_column=mysql2_query_secure($sql,$_SESSION['OCS']["readServer"],$arg);
+	//	echo "<i>".generate_secure_sql($sql,$arg)."</i><br>";
+		while ($item_column = mysqli_fetch_row($res_column)){
+			
+			if ($item_column[0] == "HARDWARE_ID" 
+				and !isset($_SESSION['OCS']['SQL_TABLE_HARDWARE_ID'][$item[0]]))
+				$_SESSION['OCS']['SQL_TABLE_HARDWARE_ID'][$item[0]]=$item[0];
+				
+			$_SESSION['OCS']['SQL_TABLE'][$item[0]][$item_column[0]]=$item_column[0];
+			
 		}
+	}
+}
+
+/*****************************************************GESTION DU NOM DES PAGES****************************************/
+//Config for all user
+if (!isset($_SESSION['OCS']['url_service'])){
+	if (!file_exists(DOCUMENT_REAL_ROOT.'/config/urls.xml')) {
+		migrate_config_2_2();
+	}
+
+	$url_serializer = new XMLUrlsSerializer();
+	$urls = $url_serializer->unserialize(file_get_contents('config/urls.xml'));
+	$_SESSION['OCS']['url_service'] = $urls;
+
+	// Backwards compatibility
+	$pages_refs = array();
+	foreach ($urls->getUrls() as $key => $url) {
+		$pages_refs[$key] = $url['value'];
+	}
+	
+	$_SESSION['OCS']['URL'] = $pages_refs;
+} else {
+	$urls = $_SESSION['OCS']['url_service'];
+	$pages_refs = $_SESSION['OCS']['URL'];
+}
+
+
+/*****************************************************GESTION DES FICHIERS JS****************************************/
+if (!isset($_SESSION['OCS']['JAVASCRIPT'])) {
+	$js_serializer = new XMLJsSerializer();
+	$_SESSION['OCS']['JAVASCRIPT'] = $js_serializer->unserialize(file_get_contents('config/js.xml'));
+}
+
+
+/**********************************************************GESTION DES COLONNES DES TABLEAUX PAR COOKIES***********************************/
+require_once('require/function_cookies.php');
+
+//Delete all cookies if GUI_VER change
+if (!isset($_COOKIE["VERS"]) or $_COOKIE["VERS"] != GUI_VER){
+	if( isset( $_COOKIE) ) {	
+		foreach( $_COOKIE as $key=>$val ) {
+			cookies_reset($key);		
+		}
+		unset( $_COOKIE );
+	}
+	cookies_add("VERS", GUI_VER);
+}
+
+//del column
+if (isset($protectedPost['SUP_COL']) and $protectedPost['SUP_COL'] != "" and isset($_SESSION['OCS']['col_tab'][$protectedPost['TABLE_NAME']])){
+	unset($_SESSION['OCS']['col_tab'][$protectedPost['TABLE_NAME']][$protectedPost['SUP_COL']]);
+	cookies_add($protectedPost['TABLE_NAME'],implode('///',$_SESSION['OCS']['col_tab'][$protectedPost['TABLE_NAME']]));
+}
+
+//default values
+if (isset($protectedPost['RAZ']) and $protectedPost['RAZ'] != ""){
+	cookies_reset($protectedPost['TABLE_NAME']);
+}
+
+//add column
+if (isset($protectedPost['TABLE_NAME']) and 
+	isset($protectedPost['restCol'.$protectedPost['TABLE_NAME']]) 
+	and $protectedPost['restCol'.$protectedPost['TABLE_NAME']] != ''){
+	$_SESSION['OCS']['col_tab'][$tab_name][$protectedPost['restCol'.$tab_name]]=$protectedPost['restCol'.$tab_name];
+	if (is_array($_SESSION['OCS']['col_tab'][$protectedPost['TABLE_NAME']])){
+		cookies_add($protectedPost['TABLE_NAME'],implode('///',$_SESSION['OCS']['col_tab'][$protectedPost['TABLE_NAME']]));
+	}
+}
+
+/********************************************************GESTION DE LA LANGUE PAR COOKIES**********************************************/
+/*****************************************************Gestion des fichiers de langues  TEST*************************************/
+if (isset($protectedPost['Valid_EDITION'])){
+	if ($protectedPost['ID_WORD'] != ''){
+		if ($protectedPost['ACTION'] == "DEL"){
+			unset($_SESSION['OCS']['LANGUAGE_FILE']->tableauMots[$protectedPost['ID_WORD']]);
+		}else{
+			$_SESSION['OCS']['LANGUAGE_FILE']->tableauMots[$protectedPost['ID_WORD']]=$protectedPost['UPDATE'];
+		}
+		
+		/*$file_name=$_SESSION['OCS']['plugins_dir']."language/".$language."/".$_SESSION['OCS']['LANGUAGE'].".txt";
+		
+		
+		$file=fopen($file_name."_old","x+");
+		foreach ($_SESSION['OCS']['LANGUAGE_FILE'] as $key=>$value){
+				fwrite($file,$key." ".$value."/r/n");			
+		}
+		fclose($file);*/
+		
+	/*	$sql="update languages set json_value = '%s'
+				where name= '%s'"; 
+		$arg=array(json_encode($_SESSION['OCS']['LANGUAGE_FILE']->tableauMots),$_SESSION['OCS']['LANGUAGE']);
+		mysql2_query_secure( $sql, $_SESSION['OCS']["writeServer"],$arg);*/
+		}
+}
+unset($_SESSION['OCS']['EDIT_LANGUAGE']);
+
+
+if (isset($protectedPost['LANG']) and $protectedPost['LANG']!= ''){
+	unset($_SESSION['OCS']['LANGUAGE']);
+	cookies_add('LANG',$protectedPost['LANG']);	
+	$_SESSION['OCS']['LANGUAGE']=$protectedPost['LANG'];
+	$_SESSION['OCS']["LANGUAGE_FILE"]=new language($_SESSION['OCS']['LANGUAGE']);
+}
+//unset($_SESSION['OCS']['LANGUAGE']);
+//si la langue par dÃ©faut n'existe pas, on rÃ©cupÃ¨rer le cookie
+if (!isset($_SESSION['OCS']['LANGUAGE']) or !isset($_SESSION['OCS']["LANGUAGE_FILE"])){
+	if (isset($_COOKIE['LANG']))
+	$_SESSION['OCS']['LANGUAGE']=$_COOKIE['LANG'];
+	if (!isset($_COOKIE['LANG']))
+	$_SESSION['OCS']['LANGUAGE']=DEFAULT_LANGUAGE;
+	$_SESSION['OCS']["LANGUAGE_FILE"]=new language($_SESSION['OCS']['LANGUAGE']);
+}
+$l = $_SESSION['OCS']["LANGUAGE_FILE"];
+/*********************************************************gestion de l'authentification****************************************************/
+
+if (!isset($_SESSION['OCS']["loggeduser"])){
+	if (!AJAX && !((array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'))){
+		if(version_compare(PHP_VERSION, '5.3.7') >= 0){
+			if(version_compare(PHP_VERSION, '5.5') < 0){
+				include_once(PASSWORD_COMPAT);
+			}
+			$values=look_config_default_values('PASSWORD_VERSION');
+			$_SESSION['OCS']['PASSWORD_VERSION'] = $values['ivalue']['PASSWORD_VERSION'];
+			$_SESSION['OCS']['PASSWORD_ENCRYPTION'] =  $values['tvalue']['PASSWORD_VERSION'];
+		}else{
+			$_SESSION['OCS']['PASSWORD_VERSION'] = false;
+			$_SESSION['OCS']['PASSWORD_ENCRYPTION'] = false;
+		}
+		require_once(BACKEND.'AUTH/auth.php');
+	}else{
+		header($_SERVER["SERVER_PROTOCOL"]." 401 ". utf8_decode($l->g(1359)));
+		die;
+	}
+	
+}
+
+/**********************************************************gestion des droits sur les TAG****************************************************/
+if (!isset($_SESSION['OCS']["lvluser"]))
+require_once(BACKEND.'identity/identity.php');
+
+
+
+/**********************************************************gestion des droits sur l'ipdiscover****************************************************/
+if (!isset($_SESSION['OCS']["ipdiscover"])){
+	require_once(BACKEND.'ipdiscover/ipdiscover.php');
+}
+
+
+/*********************************************************gestion de la suppression automatique des machines trop vieilles*************************/
+//require_once('plugins/options_config/del_old_computers.php');
+
+
+
+/********************GESTION GUI CONF******************/
+if (!isset($_SESSION['OCS']["usecache"]) or !isset($_SESSION['OCS']["tabcache"])){
+	$conf_gui=array('usecache'=>'INVENTORY_CACHE_ENABLED',
+					'tabcache'=>'TAB_CACHE',
+					'USE_NEW_SOFT_TABLES'=>'USE_NEW_SOFT_TABLES');
+	$default_value_conf=array('INVENTORY_CACHE_ENABLED'=>1,'TAB_CACHE'=>0,'USE_NEW_SOFT_TABLES' =>0);
+	$values=look_config_default_values($conf_gui);
+	foreach ($conf_gui as $k=>$v){
+		if (isset($values['ivalue'][$v]))
+			$_SESSION['OCS'][$k]=$values['ivalue'][$v];
 		else
-		{
-			$err = "</tr></table><br><center><font color=red><b>".$l->g(180)."</b></font></center>";
-			unset($_SESSION["loggeduser"],$_SESSION["lvluser"]);			
-		}				
+			$_SESSION['OCS'][$k]=$default_value_conf[$v];
+		
+	}
+}
+
+/********************END GESTION CACHE******************/
+
+
+/********************MANAGE DOWNLOAD REDISTRIBUTION******************/
+if (!isset($_SESSION['OCS']["use_redistribution"])){
+	$values=look_config_default_values(array('DOWNLOAD_REDISTRIB'));
+	$_SESSION['OCS']['use_redistribution']=$values['ivalue']['DOWNLOAD_REDISTRIB'];
+	if (!isset($_SESSION['OCS']["use_redistribution"]))
+		$_SESSION['OCS']["use_redistribution"]=1;
+}
+
+/********************END DOWNLOAD REDISTRIBUTION******************/
+
+
+/*********************************************GESTION OF LBL_TAG*************************************/
+
+if (!isset($_SESSION['OCS']['TAG_LBL'])){
+	require_once('require/function_admininfo.php');
+	$all_tag_lbl=witch_field_more('COMPUTERS');
+	foreach ($all_tag_lbl['LIST_NAME'] as $key=>$value){
+		$_SESSION['OCS']['TAG_LBL'][$value]=$all_tag_lbl['LIST_FIELDS'][$key];
+		$_SESSION['OCS']['TAG_ID'][$key]=$value;
+	}
+}
+
+/*******************************************GESTION OF PLUGINS (MAIN SECTIONS)****************************/
+
+if (!isset($_SESSION['OCS']['profile'])) {
+	$profile_config = 'config/profiles/'.$_SESSION['OCS']["lvluser"].'.xml';
+	$profile_serializer = new XMLProfileSerializer();
+	$profile = $profile_serializer->unserialize($_SESSION['OCS']["lvluser"], file_get_contents($profile_config));
+	$_SESSION['OCS']['profile'] = $profile;
+} else {
+	$profile = $_SESSION['OCS']['profile'];
+}
+
+if (!AJAX and (!isset($header_html) or $header_html != 'NO') and !isset($protectedGet['no_header'])){
+	require_once (HEADER_HTML);
+}
+
+$url_name = $urls->getUrlName($protectedGet[PAG_INDEX]);
+
+//VERIF ACCESS TO THIS PAGE
+if (isset($protectedGet[PAG_INDEX])
+	and !$profile->hasPage($url_name)
+	and (!$_SESSION['OCS']['TRUE_PAGES'] or !array_search($url_name, $_SESSION['OCS']['TRUE_PAGES']))
+	//force access to profils witch have CONFIGURATION TELEDIFF  == 'YES' for ms_admin_ipdiscover page
+	and !($profile->getConfigValue('TELEDIFF') == 'YES' and $url_name == 'ms_admin_ipdiscover')){
+		msg_error("ACCESS DENIED");
+		require_once(FOOTER_HTML);
+		die();	
+}
+
+
+if((!isset($_SESSION['OCS']["loggeduser"])
+	 or !isset($_SESSION['OCS']["lvluser"]) 
+	 or $_SESSION['OCS']["lvluser"] == "")
+	 and !isset($_SESSION['OCS']['TRUE_USER'])
+	 and $no_error != 'YES')
+{		
+	msg_error($LIST_ERROR);
+	require_once(FOOTER_HTML);
+	die();
+}
+
+if ($url_name) {
+
+	//CSRF security
+	if($_SERVER['REQUEST_METHOD'] == 'POST')
+	{
+		$csrf=true;
+		if (isset($_SESSION['OCS']['CSRF'])){
+			foreach ($_SESSION['OCS']['CSRF'] as $k=>$v){
+				if ($v == $protectedPost['CSRF_'.$k])
+					$csrf=false;				
+			}			
+		}
+	    //Here we parse the form
+	    if($csrf){
+	       msg_error("<big>CSRF ATTACK!!!</big>");
+	       require_once(FOOTER_HTML);
+	       die();
+	    }
+	 
+	    //Do the rest of the processing here
 	}	
 	
-	if ( !isset($_SESSION["loggeduser"]) && $dir = @opendir("languages")) {
-		while($filename = readdir($dir)) {
-			if( strstr ( $filename, ".txt") === false)
-				continue;
-			$langue = basename ( $filename,".txt");
-			echo "<a title='$langue' href=\"index.php?av=1&multi=".$_GET["multi"]."&c=".$_GET["c"]."&a=".$_GET["a"]."&lang=$langue\"><img src =\"languages/$langue.png\" width=\"20\" height=\"15\"></a>&nbsp;";
-		}
-		closedir($dir);
+	if ($urls->getDirectory($url_name)) {
+		$rep = $urls->getDirectory($url_name);
 	}
+	require (MAIN_SECTIONS_DIR.$rep."/".$url_name.".php");
 	
-	if( isset($err) )
-		echo $err;
-	
-	if(isset($_SESSION["loggeduser"]) && !isset($_GET["popup"]))
-		echo "</td></tr><tr align=center><td align='center' colspan='3'>&nbsp;&nbsp;&nbsp;<a href=?logout><font color=black><u>".$l->g(251)."</u></font></a>&nbsp;&nbsp;&nbsp;<a href=index.php?multi=11><font color=black><u>".$l->g(236)."</u></font></a></td>";
-
-	echo "</tr></table>";
-
-	if(!isset($_SESSION["loggeduser"]))
-	{			
-		echo "<br><form name=log action=index.php method=post>
-		<table BORDER='0' WIDTH = '35%' ALIGN = 'Center' CELLPADDING='0' BORDERCOLOR='#9894B5'>
-			<tr>
-				<td><b>".$l->g(24).":</b></td>
-				<td><input name=login type=input size=15></td>
-			</tr>
-			<tr>
-				<td><b>".$l->g(217).":</b></td>
-				<td><input name=pass type=password size=15></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td><input name=subLogin type=submit value=".$l->g(13)."></td>
-			</tr>
-		</table>
-		</form>		
-		";
-		include ("footer.php");
-		die();
-	
+} else {
+	$default_first_page = MAIN_SECTIONS_DIR."ms_console/ms_console.php";
+	if (isset($protectedGet['first'])) {
+		require (MAIN_SECTIONS_DIR."ms_console/ms_console.php");
+	} else if ($profile->hasPage('ms_console'))	{
+		require ($default_first_page);	
+	} else {
+		echo  "<img src='image/fond.png'>";
 	}
-	
-	$limitedAccess = array(2,3,4,5,6,7,8,9,14,13,22,23,24,27,20,21,26);
-	if( in_array($_GET["multi"],$limitedAccess) && $_SESSION["lvluser"]!=1) {
-		echo "<br><br><center><b><font color=red>ACCESS DENIED</font></b></center><br>";
-		unset($_GET["multi"]);
-		die();
-	}
-*/
+		
+}
 
 }
 ?>
