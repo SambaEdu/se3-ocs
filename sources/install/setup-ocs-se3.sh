@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ################################################################################
 #
 # OCS Inventory NG Management Server Setup
@@ -14,20 +14,18 @@
 ###################### UDPATE FOR SE3 ##########################################
 #
 apt-get update
+apt-get install perl -y
 apt-get install libxml-simple-perl -y
 apt-get install libcompress-zlib-perl -y
 apt-get install libdbi-perl -y
 apt-get install libdbd-mysql-perl -y
 apt-get install libapache-dbi-perl -y
-apt-get install libxml-entities-perl -y
+#apt-get install libxml-entities-perl -y
 apt-get install libnet-ip-perl -y
 apt-get install libsoap-lite-perl -y
-cpan -i XML::Entities
+#cpan -i XML::Entities
 
 ### Variable a modifier pour se3 : ADM_SERVER_STATIC_DIR, DB_SERVER_PWD ###
-
-
-
 #
 ################################################################################
 
@@ -686,6 +684,62 @@ echo -n "Do you wish to setup Communication server on this computer ([y]/n)?"
     echo "OK, Communication server will put plugins Perl modules files into directory $OCS_COM_SRV_PLUGINS_PERL_DIR ;-)"
     echo "Using $OCS_COM_SRV_PLUGINS_PERL_DIR as Communication server plugins perl directory" >> $SETUP_LOG
     echo
+
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, looks good ;-)                                       |"
+    echo "|                                                          |"
+    echo "| Installation of XML::Entities for PERL                   |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Configuring XML::Entities (perl Makefile.PL)" >> $SETUP_LOG
+    cd "perl"
+	cd "XMLEntities"
+    $PERL_BIN Makefile.PL
+    if [ $? -ne 0 ]
+    then
+        echo -n "Warning: Prerequisites too old ! Do you wish to continue (y/[n])?"
+
+            echo "Maybe Communication server will encounter problems. Continuing anyway."
+            echo "Warning: Prerequisites too old ! Continuing anyway" >> $SETUP_LOG
+
+    fi
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, looks good ;-)                                       |"
+    echo "|                                                          |"
+    echo "| Preparing XML::Entities Perl modules...                  |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Preparing XML::Entities Perl modules (make)" >> $SETUP_LOG
+    $MAKE >> $SETUP_LOG 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "*** ERROR: Prepare failed, please look at error in $SETUP_LOG and fix !"
+        echo
+        echo "Installation aborted !"
+        exit 1
+    fi
+    
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, prepare finshed ;-)                                  |"
+    echo "|                                                          |"
+    echo "| Installing XML::Entities Perl modules...                 |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Installing XML::Entities Perl modules (make install)" >> $SETUP_LOG
+    $MAKE install >> $SETUP_LOG 2>&1
+    if [ $? -ne 0 ]
+    then 
+        echo "*** ERROR: Install of Perl modules failed, please look at error in $SETUP_LOG and fix !"
+        echo
+        echo "Installation aborted !"
+        exit 1
+    fi
+    cd ".."
+	cd ".."
+
     
     # jump to communication server directory
     echo "Entering Apache sub directory" >> $SETUP_LOG
