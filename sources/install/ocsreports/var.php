@@ -8,7 +8,7 @@
 // code is always made freely available.
 // Please refer to the General Public Licence http://www.gnu.org/ or Licence.txt
 //====================================================================================
-
+// UPDATED FOR SE3 BY LAURENT JOLY 19-03-2016
 @session_start();
 define('DOCUMENT_REAL_ROOT', dirname(__FILE__));
 define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
@@ -16,7 +16,7 @@ define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define("GUI_VER", "7009");												// Version of the database
 define("GUI_VER_SHOW","2.2");        								    // Version of the GUI
 define("MAC_FILE", __DIR__ . '/files/oui.txt');									// File containing MAC database
-define("DEFAULT_LANGUAGE","english");    								// Default language
+define("DEFAULT_LANGUAGE","french");    								// Default language
 define("PAG_INDEX","function");         								// define name in url (like multi=32)
 define("DEMO",false);			        								// Define if we use demo version or not (for OCS TEAM, other=> DO NOT USE IT)
 define("DEMO_LOGIN",'demo');											// Define demo login for connexion

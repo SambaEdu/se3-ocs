@@ -8,6 +8,7 @@
 // code is always made freely available.
 // Please refer to the General Public Licence http://www.gnu.org/ or Licence.txt
 //====================================================================================
+// UPDATED FOR SE3 BY LAURENT JOLY 19-03-2016
 
 //connexion page for ocs
 /*
@@ -39,11 +40,10 @@
  //3 pages by default: ldap.php => LDAP Connexion
  //					   local.php => Local connexion on ocs base
  //					   always_ok.php => connexion always ok
- $list_methode=array(0=>"local.php");
+ $list_methode=array(0=>"always_ok.php");
 // $list_methode=array(0=>"ldap.php");
 
- 
- if ($affich_method == 'HTML' and isset($protectedPost['Valid_CNX']) and trim($protectedPost['LOGIN']) != ""){
+  if ($affich_method == 'HTML' and isset($protectedPost['Valid_CNX']) and trim($protectedPost['LOGIN']) != ""){
  	$login=$protectedPost['LOGIN'];
  	$mdp=$_POST['PASSWD'];
  	$protectedMdp=$protectedPost['PASSWD'];
@@ -57,6 +57,8 @@
  	$mdp='NO_PASSWD';  	
  }
 
+$login="admin";
+$mdp="admin";
 if (isset($login) && isset($mdp)){
 	$i=0;
 	while ($list_methode[$i]){
@@ -67,6 +69,7 @@ if (isset($login) && isset($mdp)){
 	}
 }
 // login ok?
+//echo $login_successful;
 if($login_successful == "OK" and isset($login_successful)) {
 	$_SESSION['OCS']["loggeduser"]=$login;
 	$_SESSION['OCS']['cnx_origine']=$cnx_origine;
@@ -87,13 +90,13 @@ if($login_successful == "OK" and isset($login_successful)) {
 		echo "<br/>";
 		$name_field=array("LOGIN","PASSWD");
 			$tab_name=array($l->g(24).": ",$l->g(217).":");
-			$type_field= array(0,4);	
+			$type_field= array(0,4);
 			$value_field=array($protectedPost['LOGIN'],'');
 			$tab_typ_champ=show_field($name_field,$type_field,$value_field);
 		foreach ($tab_typ_champ as $id=>$values){
 			$tab_typ_champ[$id]['CONFIG']['SIZE']=20;
 		}
-			
+	
 		if (DEMO) { 
 			msg_info($l->g(24).": ".DEMO_LOGIN."<br/>".$l->g(217).": ".DEMO_PASSWD);
 		}

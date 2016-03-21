@@ -8,6 +8,7 @@
 // code is always made freely available.
 // Please refer to the General Public Licence http://www.gnu.org/ or Licence.txt
 //====================================================================================
+// UPDATED FOR SE3 BY LAURENT JOLY 19-03-2016
 
 if (!isset($debut))
 die('FORBIDDEN');
@@ -20,6 +21,21 @@ require_once('require/config/include.php');
 
 @session_start();
 error_reporting(E_ALL & ~E_NOTICE);
+
+/********************************************SPECIFIC SE3********************************************/
+// Ajout Se3 pour l'authentification 
+require_once("../includes/config.inc.php");
+require_once("includes/functions.inc.php");
+$login =isauth();
+
+// chemin pour ocsreports
+$pathocs=$path_to_wwwse3."/ocsreports";
+chdir($pathocs);
+
+// Si pas se3_is_admin
+if ((ldap_get_right("se3_is_admin",$login)=="Y") || (ldap_get_right("computers_is_admin",$login)=="Y") || (ldap_get_right("inventaire_can_read",$login)=="Y") || (ldap_get_right("parc_can_manage",$login)=="Y"))
+{
+
 /********************************************FIND SERVER URL****************************************/
 $addr_server=explode('/',$_SERVER['HTTP_REFERER']);
 array_pop($addr_server);
@@ -338,6 +354,7 @@ if (!isset($_SESSION['OCS']["loggeduser"])){
 		header($_SERVER["SERVER_PROTOCOL"]." 401 ". utf8_decode($l->g(1359)));
 		die;
 	}
+	
 }
 
 /**********************************************************gestion des droits sur les TAG****************************************************/
@@ -477,5 +494,5 @@ if ($url_name) {
 		
 }
 
-
+}
 ?>

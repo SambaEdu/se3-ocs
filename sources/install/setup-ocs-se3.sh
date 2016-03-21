@@ -1400,20 +1400,6 @@ echo -n "on this computer ([y]/n)?"
         exit 1
     fi
     # Set database configuration file dbconfig.inc.php writable by Apache
-    echo "Creating database configuration file $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php."
-    echo "Creating database configuration file $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php" >> $SETUP_LOG
-    rm -f $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo "<?php" >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n '$_SESSION["SERVEUR_SQL"]="' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n "$DB_SERVER_HOST" >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo '";' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n '$_SESSION["COMPTE_BASE"]="' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n "$DB_SERVER_USER" >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo '";' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n '$_SESSION["PSWD_BASE"]="' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo -n "$DB_SERVER_PWD" >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo '";' >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
-    echo "?>" >> $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
     chown root:$APACHE_GROUP $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php
     chmod g+w $ADM_SERVER_STATIC_DIR/$ADM_SERVER_STATIC_REPORTS_DIR/dbconfig.inc.php >> $SETUP_LOG 2>&1
     if [ $? -ne 0 ]
@@ -1680,16 +1666,6 @@ echo
 #
 echo "copie du menu"
 cp se3/90inventaire.inc /var/www/se3/includes/menu.d/
-echo "copie de auth.php"
-cp se3/auth.php /var/www/se3/ocsreports/backend/AUTH/
-echo "copie de dbconfig.inc.php"
-cp se3/dbconfig.inc.php /var/www/se3/ocsreports/
-echo "copie de header.php"
-cp se3/header.php /var/www/se3/ocsreports/require/
-echo "copie de html_header.php"
-cp se3/html_header.php /var/www/se3/ocsreports/require/
-echo "copie de var.php"
-cp se3/var.php /var/www/se3/ocsreports/
 
 echo "Redemarrage des services apache2 et apache2se"
 /etc/init.d/apache2 restart

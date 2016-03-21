@@ -8,12 +8,35 @@
 // code is always made freely available.
 // Please refer to the General Public Licence http://www.gnu.org/ or Licence.txt
 //====================================================================================
+// UPDATED FOR SE3 BY LAURENT JOLY 19-03-2016
 
 if (isset($protectedGet['head']) and $protectedGet['head'] == 1)
 $ban_head='no';
 /*******************************************************AFFICHAGE HTML DU HEADER*******************************************/
 html_header();
 
+
+/*******************************************************SPECIFIC SE3********************************************************/
+echo '<link rel="stylesheet" href="/elements/style_sheets/sambaedu.css" type="text/css">';
+echo "<H3 ALIGN=RIGHT><FONT color=#6699cc>Bonjour $login (niveau ";
+ $intlevel=getintlevel();
+ switch ($intlevel) {
+	case 1:
+		echo gettext("D&#233;butant");
+		break;
+	case 2:
+		echo gettext("Interm&#233;diaire");
+		break;
+	case 3:
+		echo gettext("Confirm&#233;");
+		break;
+	case 4:
+		echo gettext("Exp&#233;rimental");
+		break;
+}
+echo ")</FONT></H3>";
+echo "<H1>Inventaire informatique</H1>";
+/**************************************************END OF SPECIFIC SE3********************************************************/
 echo '<div class="headfoot navbar navbar-default">';
 //on affiche l'entete de la page
 if (!isset($protectedGet["popup"])) {
