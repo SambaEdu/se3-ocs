@@ -1,7 +1,3 @@
-var/cache/ocs
-var/cache/se3_install
+var/cache/se3_install/ocs
 var/www/se3/includes/menu.d
-var/www/se3/ocsreports
-etc/apache2se/conf.d
-etc/ocsinventory
-tmp/install
+tmp/install/ocs
