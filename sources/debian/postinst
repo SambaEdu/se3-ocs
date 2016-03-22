@@ -46,12 +46,12 @@ if [ -e $WWWPATH/se3/includes/dbconfig.inc.php ]; then
 	if [ -e /etc/apache2se/conf.d/ocsinventory.conf ]; then
 		/var/cache/se3_install/ocs/clean-oldocs.sh
 		# nouvelle installation
-		mysql < /var/cache/se3_install/ocs/ocsbase.sql 2>/dev/null
+		mysql -u root -p$PASS_SQL < /var/cache/se3_install/ocs/ocsbase.sql 
 
 	fi	
 else
 	# nouvelle installation
-	mysql < /var/cache/se3_install/ocs/ocsbase.sql 2>/dev/null
+	mysql -u root -p$PASS_SQL < /var/cache/se3_install/ocs/ocsbase.sql 2>/dev/null
 fi
 
 # mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase-se3.sql 2>/dev/null
@@ -66,9 +66,8 @@ echo "<?php
 \$_SESSION[\"PSWD_BASE\"]=\"$MDP_OCS\";
 ?>" > /var/www/se3/includes/dbconfig.inc.php
 
-
-/tmp/install/ocs/setup-ocs-se3.sh
-
+cd /tmp/install/ocs/
+./setup-ocs-se3.sh $MDP_OCS
 
 
 

@@ -1,6 +1,6 @@
 -- If it's a new database
 --
-
+drop database if exists ocsweb;
 CREATE DATABASE ocsweb;
 USE ocsweb;
 
@@ -1549,9 +1549,9 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `reg_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-ALTER TABLE `plugins` ADD PRIMARY KEY (`id`);
-ALTER TABLE `plugins` MODIFY `id` int(6) unsigned NOT NULL AUTO_INCREMENT;
+--ALTER TABLE `plugins` ADD PRIMARY KEY (`id`);
+--ALTER TABLE `plugins` MODIFY `id` int(6) unsigned NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `config` VALUES('OCS_SERVER_ADDRESS',0,'127.0.0.1','Ocs serveur ip for plugin webservice');
+
 
 
