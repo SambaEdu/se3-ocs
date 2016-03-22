@@ -13,16 +13,16 @@
 
 ###################### UDPATE FOR SE3 ##########################################
 #
-apt-get update
-apt-get install perl -y
-apt-get install libxml-simple-perl -y
-apt-get install libcompress-zlib-perl -y
-apt-get install libdbi-perl -y
-apt-get install libdbd-mysql-perl -y
-apt-get install libapache-dbi-perl -y
-#apt-get install libxml-entities-perl -y
-apt-get install libnet-ip-perl -y
-apt-get install libsoap-lite-perl -y
+# apt-get update
+# apt-get install perl -y
+# apt-get install libxml-simple-perl -y
+# apt-get install libcompress-zlib-perl -y
+# apt-get install libdbi-perl -y
+# apt-get install libdbd-mysql-perl -y
+# apt-get install libapache-dbi-perl -y
+# #apt-get install libxml-entities-perl -y
+# apt-get install libnet-ip-perl -y
+# apt-get install libsoap-lite-perl -y
 #cpan -i XML::Entities
 
 ### Variable a modifier pour se3 : ADM_SERVER_STATIC_DIR, DB_SERVER_PWD ###
@@ -36,7 +36,7 @@ DB_SERVER_HOST="localhost"
 DB_SERVER_PORT="3306"
 # Database server credentials
 DB_SERVER_USER="ocs"
-DB_SERVER_PWD="3cec50d"
+DB_SERVER_PWD="$1"
 # Where is Apache daemon binary (if empty, will try to find it)
 APACHE_BIN=""
 # Where is Apache configuration file (if empty, will try to find it)
@@ -92,46 +92,16 @@ ADM_SERVER_VAR_SCRIPTS_LOGS_DIR="scripts"
 # Administration console default ipdsicover-util.pl cache dir
 ADM_SERVER_VAR_IPD_DIR="ipd"
 # OS or linux distribution from automatic detection
-UNIX_DISTRIBUTION=""
+UNIX_DISTRIBUTION="debian"
 
 
 
 ###################### DO NOT MODIFY BELOW #######################
 
 # Check for Apache web server binaries
-echo
-echo "+----------------------------------------------------------+"
-echo "|                                                          |"
-echo "| Welcome to OCS Inventory NG Management server setup !    |"
-echo "|                                                          |"
-echo "+----------------------------------------------------------+"
-echo
-# Check for OS or linux distribution
-echo "Trying to determine whitch OS or Linux distribution you use"
-
-if [ -f /etc/redhat-release ]
-then
-    UNIX_DISTRIBUTION="redhat"
-elif [ -f /etc/debian_version ]
-then
-    UNIX_DISTRIBUTION="debian"
-elif [ -f /etc/SuSE-release ]
-then
-    UNIX_DISTRIBUTION="suse"
-fi
-
-# Check for Apache web server binaries
 echo "+----------------------------------------------------------+"
 echo "| Checking for Apache web server binaries !                |"
 echo "+----------------------------------------------------------+"
-echo
-echo "CAUTION: If upgrading Communication server from OCS Inventory NG 1.0 RC2 and"
-echo "previous, please remove any Apache configuration for Communication Server!"
-
-    echo "Assuming Communication server 1.0 RC2 or previous is not installed"
-    echo "on this computer."
-    echo
-
 
 echo > $SETUP_LOG
 OCS_LOCAL_DATE=`date +%Y-%m-%d-%H-%M-%S`
@@ -148,75 +118,9 @@ echo "============================================================" >> $SETUP_LO
 echo "Checking OCS Inventory NG Management Server requirements..." >> $SETUP_LOG 
 echo "============================================================" >> $SETUP_LOG
 echo
-echo "+----------------------------------------------------------+"
-echo "| Checking for database server properties...               |"
-echo "+----------------------------------------------------------+"
-echo
-# Check mysql client distribution version
-echo "Checking for database server properties" >> $SETUP_LOG
-DB_CLIENT_MAJOR_VERSION=`eval mysql -V | cut -d' ' -f6 | cut -d'.' -f1` >> $SETUP_LOG 2>&1
-DB_CLIENT_MINOR_VERSION=`eval mysql -V | cut -d' ' -f6 | cut -d'.' -f2` >> $SETUP_LOG 2>&1
-echo "Your MySQL client seems to be part of MySQL version $DB_CLIENT_MAJOR_VERSION.$DB_CLIENT_MINOR_VERSION."
-echo "MySQL client distribution version $DB_CLIENT_MAJOR_VERSION.$DB_CLIENT_MINOR_VERSION." >> $SETUP_LOG
-# Ensure mysql distribution is 4.1 or higher
-if [ $DB_CLIENT_MAJOR_VERSION -gt 4 ]
-then
-    res=1
-else
-    if [ $DB_CLIENT_MAJOR_VERSION -eq 4 ]
-    then
-        if [ $DB_CLIENT_MINOR_VERSION -eq 1 ]
-        then
-            res=1
-        else
-            res=0
-        fi
-    else
-        res=0
-    fi
-fi
-if [ $res -eq 0 ]
-then
-    # Not 4.1 or higher, ask user to contnue ?
-    echo "Your computer does not seem to be compliant with MySQL 4.1 or higher."
-
-
-        echo "Ensure your database server is running MySQL 4.1 or higher !"
-        echo "Ensure also this computer is able to connect to your MySQL server !"
-
-else
-    echo "Your computer seems to be running MySQL 4.1 or higher, good ;-)"
-    echo "Computer seems to be running MySQL 4.1 or higher" >> $SETUP_LOG
-fi
-echo
 
 # Ask user for database server host
-res=0
-while [ $res -eq 0 ]
-do
-    echo -n "Which host is running database server [$DB_SERVER_HOST] ?"
 
-
-        res=1
-
-done
-echo "OK, database server is running on host $DB_SERVER_HOST ;-)"
-echo "Database server is running on host $DB_SERVER_HOST" >> $SETUP_LOG
-echo
-
-# Ask user for database server port
-res=0
-while [ $res -eq 0 ]
-do
-    echo -n "On which port is running database server [$DB_SERVER_PORT] ?"
- 
-
-        res=1
-
-done
-echo "OK, database server is running on port $DB_SERVER_PORT ;-)"
-echo "Database server is running on port $DB_SERVER_PORT" >> $SETUP_LOG
-echo
 
 echo
 echo "+----------------------------------------------------------+"
@@ -1664,8 +1568,8 @@ echo "Enjoy OCS Inventory NG ;-)"
 echo
 ###################### UDPATE FOR SE3 ##########################################
 #
-echo "copie du menu"
-cp se3/90inventaire.inc /var/www/se3/includes/menu.d/
+# echo "copie du menu"
+# cp se3/90inventaire.inc /var/www/se3/includes/menu.d/
 
 echo "Redemarrage des services apache2 et apache2se"
 /etc/init.d/apache2 restart
