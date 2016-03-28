@@ -46,18 +46,19 @@ if [ -e $WWWPATH/se3/includes/dbconfig.inc.php ]; then
 	if [ -e /etc/apache2se/conf.d/ocsinventory.conf ]; then
 		/var/cache/se3_install/ocs/clean-oldocs.sh
 		# nouvelle installation
-		mysql -u root -p$PASS_SQL < /var/cache/se3_install/ocs/ocsbase.sql 
+		mysql -u root -p"$PASS_SQL" < /var/cache/se3_install/ocs/ocsbase.sql 
 
 	fi	
 else
 	# nouvelle installation
-	mysql -u root -p$PASS_SQL < /var/cache/se3_install/ocs/ocsbase.sql 2>/dev/null
+	mysql -u root -p"$PASS_SQL" < /var/cache/se3_install/ocs/ocsbase.sql 2>/dev/null
 fi
 
 # mysql -h localhost -u root -p$password --force < /var/cache/se3_install/ocsbase-se3.sql 2>/dev/null
 
-mysql -u root -p$PASS_SQL -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs IDENTIFIED BY '$MDP_OCS'";
-mysql -u root -p$PASS_SQL -e "GRANT ALL PRIVILEGES ON ocsweb.* TO ocs@localhost IDENTIFIED BY '$MDP_OCS'";
+#mysql -u root -p"$PASS_SQL" -e "GRANT ALL PRIVILEGES ON ocsweb.* TO 'ocs'@'%' IDENTIFIED BY '$MDP_OCS';"
+mysql -u root -p"$PASS_SQL" -e "GRANT ALL PRIVILEGES ON ocsweb.* TO 'ocs'@'localhost' IDENTIFIED BY '$MDP_OCS';"
+mysql -u root -p"$PASS_SQL" -e "FLUSH PRIVILEGES;"
 
 # Creation de la conf
 echo "<?php
