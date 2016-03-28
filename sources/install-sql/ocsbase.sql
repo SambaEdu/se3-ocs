@@ -161,7 +161,7 @@ INSERT INTO `config` VALUES ('FREQUENCY',0,'','Specify the frequency (days) of i
 
 INSERT INTO config VALUES ('INVENTORY_CACHE_REVALIDATE',7,'','the engine will clean the inventory cache structures');
 
-INSERT INTO config VALUES ('GUI_VERSION', 0, '7006', 'Version of the installed GUI and database');
+INSERT INTO config VALUES ('GUI_VERSION', 0, '7009', 'Version of the installed GUI and database');
 UNLOCK TABLES;
 -- BEGIN 2.0RC3 --
 DELETE FROM config WHERE name='LOCAL_SERVER' or name='LOCAL_PORT';
@@ -833,9 +833,9 @@ CREATE TABLE `operators` (
 --
 
 LOCK TABLES `operators` WRITE;
-INSERT INTO `operators` VALUES ('admin','admin','admin','21232f297a57a5a743894a0e4a801fc3',1,'Default administrator account','sadmin',NULL,NULL);
+INSERT INTO `operators` VALUES ('admin','admin','admin','21232f297a57a5a743894a0e4a801fc5',1,'Default administrator account','sadmin',NULL,NULL);
 UNLOCK TABLES;
-
+--  mot de passe par defaut : 21232f297a57a5a743894a0e4a801fc3 change pour eviter l alerte
 --
 -- Table structure for table `ports`
 --
@@ -1549,8 +1549,8 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `reg_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
---ALTER TABLE `plugins` ADD PRIMARY KEY (`id`);
---ALTER TABLE `plugins` MODIFY `id` int(6) unsigned NOT NULL AUTO_INCREMENT;
+-- ALTER TABLE `plugins` ADD PRIMARY KEY (`id`);
+-- ALTER TABLE `plugins` MODIFY `id` int(6) unsigned NOT NULL AUTO_INCREMENT;
 
 
 
