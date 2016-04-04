@@ -1,7 +1,19 @@
+se3-ocs (2.0-3) unstable; urgency=low
+
+  * Paquet serveur finalise.
+
+ -- Laurent JOLY <laurentjoly@orange.fr>  Mon, 04 Apr 2016 01:56:05 +0200
+
+se3-ocs (2.0-2) unstable; urgency=low
+
+  * Mise en fonction du paquet.
+
+ -- Laurent JOLY <laurentjoly@orange.fr>  Mon, 28 Mar 2016 03:41:10 +0200
+
 se3-ocs (2.0-1) unstable; urgency=low
 
   * initial release
 
- -- root <root@DevilXen>  Thu, 14 Jun 2012 22:58:03 +0200
+ -- franck MOLLE <franck.molle@ac-rouen.fr>  Thu, 14 Jun 2012 22:58:03 +0200
 
 
