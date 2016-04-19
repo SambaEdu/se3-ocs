@@ -1,0 +1,23 @@
+Format: 1.8
+Date: Tue, 19 Apr 2016 13:58:51 +0200
+Source: se3-ocs
+Binary: se3-ocs
+Architecture: all
+Version: 2.0-4
+Distribution: unstable
+Urgency: low
+Maintainer: plouf <plouf@sambaedu.org>
+Changed-By: Laurent JOLY <laurentjoly@orange.fr>
+Description: 
+ se3-ocs    - ocs-inventory-NG pour se3
+Changes: 
+ se3-ocs (2.0-4) unstable; urgency=low
+ .
+   * Ajout d'un paquet perl
+   * Finalisation du paquet
+Checksums-Sha1: 
+ c587268b87f5a1a139455ef9b615c653eeabc754 2699794 se3-ocs_2.0-4_all.deb
+Checksums-Sha256: 
+ 16d529720f8223b96cacaf53ba3a6cfa1fadc10036504f25fb62e943edc624cd 2699794 se3-ocs_2.0-4_all.deb
+Files: 
+ 5c12409f6f0fb09947175f85623cf9e1 2699794 misc optional se3-ocs_2.0-4_all.deb
