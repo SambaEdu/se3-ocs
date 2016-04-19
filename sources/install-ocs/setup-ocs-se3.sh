@@ -644,6 +644,61 @@ echo -n "Do you wish to setup Communication server on this computer ([y]/n)?"
     cd ".."
 	cd ".."
 
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, looks good ;-)                                       |"
+    echo "|                                                          |"
+    echo "| Installation of Archive::Zip for PERL                    |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Configuring Archive::Zip (perl Makefile.PL)" >> $SETUP_LOG
+    cd "perl"
+	cd "ArchiveZip"
+    $PERL_BIN Makefile.PL
+    if [ $? -ne 0 ]
+    then
+        echo -n "Warning: Prerequisites too old ! Do you wish to continue (y/[n])?"
+
+            echo "Maybe Communication server will encounter problems. Continuing anyway."
+            echo "Warning: Prerequisites too old ! Continuing anyway" >> $SETUP_LOG
+
+    fi
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, looks good ;-)                                       |"
+    echo "|                                                          |"
+    echo "| Preparing Archive::Zip Perl modules...                  |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Preparing Archive::Zip Perl modules (make)" >> $SETUP_LOG
+    $MAKE >> $SETUP_LOG 2>&1
+    if [ $? -ne 0 ]
+    then
+        echo "*** ERROR: Prepare failed, please look at error in $SETUP_LOG and fix !"
+        echo
+        echo "Installation aborted !"
+        exit 1
+    fi
+    
+    echo
+    echo "+----------------------------------------------------------+"
+    echo "| OK, prepare finshed ;-)                                  |"
+    echo "|                                                          |"
+    echo "| Installing Archive::Zip Perl modules...                 |"
+    echo "+----------------------------------------------------------+"
+    echo
+    echo "Installing Archive::Zip Perl modules (make install)" >> $SETUP_LOG
+    $MAKE install >> $SETUP_LOG 2>&1
+    if [ $? -ne 0 ]
+    then 
+        echo "*** ERROR: Install of Perl modules failed, please look at error in $SETUP_LOG and fix !"
+        echo
+        echo "Installation aborted !"
+        exit 1
+    fi
+    cd ".."
+	cd ".."
+
     
     # jump to communication server directory
     echo "Entering Apache sub directory" >> $SETUP_LOG
