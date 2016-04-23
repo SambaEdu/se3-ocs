@@ -29,6 +29,18 @@ if [ "X$test_exist" = "X" ]; then # if empty
 	echo "INSERT INTO params VALUES ('', 'inventaire', '0', 0, 'Activation de l\'inventaire', 6)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 fi
 	
+	
+	
+	
+
+cachedir="/var/cache/se3install/ocs"
+if [ -e "$cachedir/old_version" ]; then
+	old_version="$(cat )"
+	if [ -n "$(grep "^2.0" $cachedir/old_version)" ]; then
+		echo "mise à jour du paquet uniquement"
+		exit 0
+	fi
+fi
 # Creation du MDP_OCS ou maj
 MDP_OCS=`date|md5sum|cut -c 3-9`
 
