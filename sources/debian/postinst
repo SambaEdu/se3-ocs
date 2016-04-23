@@ -33,9 +33,8 @@ fi
 	
 	
 
-cachedir="/var/cache/se3install/ocs"
+cachedir="/var/cache/se3_install/ocs"
 if [ -e "$cachedir/old_version" ]; then
-	old_version="$(cat )"
 	if [ -n "$(grep "^2.0" $cachedir/old_version)" ]; then
 		echo "mise à jour du paquet uniquement"
 		exit 0
