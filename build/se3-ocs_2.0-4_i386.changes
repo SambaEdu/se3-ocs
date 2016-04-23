@@ -16,8 +16,8 @@ Changes:
    * Ajout d'un paquet perl
    * Finalisation du paquet
 Checksums-Sha1: 
- c587268b87f5a1a139455ef9b615c653eeabc754 2699794 se3-ocs_2.0-4_all.deb
+ 8a98183c09ae33e63601fa07496108e5bf54a3c2 2688592 se3-ocs_2.0-4_all.deb
 Checksums-Sha256: 
- 16d529720f8223b96cacaf53ba3a6cfa1fadc10036504f25fb62e943edc624cd 2699794 se3-ocs_2.0-4_all.deb
+ 0e3f1e6a4a1f610aa5bd8767a0eac9d8445bd24771c0a96526da4dab335d2be1 2688592 se3-ocs_2.0-4_all.deb
 Files: 
- 5c12409f6f0fb09947175f85623cf9e1 2699794 misc optional se3-ocs_2.0-4_all.deb
+ 51c8cc96c45b688fbe1aa069a8e1e7ba 2688592 misc optional se3-ocs_2.0-4_all.deb
