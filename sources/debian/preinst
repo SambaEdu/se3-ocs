@@ -5,6 +5,7 @@ set -e
 
 if [ "$1" = "upgrade" ]; then
 	cachedir="/var/cache/se3_install/ocs"
+	mkdir -p $cachedir
 	echo "$2" > $cachedir/old_version
 fi
 exit 0
