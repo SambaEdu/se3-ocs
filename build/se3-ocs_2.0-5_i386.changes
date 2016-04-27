@@ -16,8 +16,8 @@ Changes:
    * Ajout d'un test sur ancienne version
    * Correction preinst
 Checksums-Sha1: 
- 3bdd242c5dbf1e3aef08a6cb367cc6b49ec52915 2691592 se3-ocs_2.0-5_all.deb
+ 31d912314c4b42334bc48116d2f7d44fe14b9f2e 2691600 se3-ocs_2.0-5_all.deb
 Checksums-Sha256: 
- d33266132ee68e195deb585ce388c4751c84a35c134fe0c704dec92050034c9e 2691592 se3-ocs_2.0-5_all.deb
+ a4bee5d0663db0aadd31ae828460cfb558e3e4ae78e1dae819a0efd051be5c67 2691600 se3-ocs_2.0-5_all.deb
 Files: 
- 881359574675beb0e1eb3f84cbf75a38 2691592 misc optional se3-ocs_2.0-5_all.deb
+ 79638707fb94ebf10a61402875a690e1 2691600 misc optional se3-ocs_2.0-5_all.deb
