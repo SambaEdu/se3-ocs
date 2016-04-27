@@ -1626,9 +1626,9 @@ echo
 # echo "copie du menu"
 # cp se3/90inventaire.inc /var/www/se3/includes/menu.d/
 
-echo "Redemarrage des services apache2 et apache2se"
+echo "Redemarrage du service apache2"
 /etc/init.d/apache2 restart
-/etc/init.d/apache2se restart
+
 #
 ################################################################################
 exit 0
