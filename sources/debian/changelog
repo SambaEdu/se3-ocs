@@ -1,3 +1,10 @@
+se3-ocs (2.0-6~1) unstable; urgency=low
+
+  * Modification du chemin temporaire de l'installation pour /opt
+  * deploiement du client via un xml wpkg
+
+ -- franck MOLLE <franck.molle@ac-rouen.fr>  wed, 21 Oct 2016 00:56:03 +0200
+
 se3-ocs (2.0-5) unstable; urgency=low
 
   * Ajout d'un test sur ancienne version
