@@ -9,7 +9,7 @@ install:
 	#cp -R www/* $(DESTDIR)/var/www/se3/ocsreports/
 	cp -R menu/* $(DESTDIR)/var/www/se3/includes/menu.d/
 	cp -R install-sql/* $(DESTDIR)/var/cache/se3_install/ocs/
-	cp -R install-ocs/* $(DESTDIR)/tmp/install/ocs/
+	cp -R install-ocs/* $(DESTDIR)/opt/install/ocs/
 	
 
 clean:
