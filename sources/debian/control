@@ -7,5 +7,5 @@ Standards-Version: 3.7.2
 
 Package: se3-ocs
 Architecture: all
-Depends: se3 (>= 2.5), libxml-simple-perl, libdbi-perl, libdbd-mysql-perl, libapache-dbi-perl, libnet-ip-perl, libsoap-lite-perl
+Depends: se3 (>= 2.5), se3-wpkg, libxml-simple-perl, libdbi-perl, libdbd-mysql-perl, libapache-dbi-perl, libnet-ip-perl, libsoap-lite-perl
 Description: ocs-inventory-NG pour se3
