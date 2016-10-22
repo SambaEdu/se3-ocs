@@ -9,8 +9,6 @@ set -e
 case "$1" in
     install|configure)
 
-	
-
 ### on suppose que l'on est sous debian :D  ####
 WWWPATH="/var/www"
 ## recuperation des variables necessaires pour interoger mysql ###
@@ -29,10 +27,6 @@ if [ "X$test_exist" = "X" ]; then # if empty
 	echo "INSERT INTO params VALUES ('', 'inventaire', '0', 0, 'Activation de l\'inventaire', 6)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 fi
 	
-	
-	
-	
-
 cachedir="/var/cache/se3_install/ocs"
 if [ -e "$cachedir/old_version" ]; then
 	if [ -n "$(grep "^2.0" $cachedir/old_version)" ]; then
@@ -78,10 +72,32 @@ echo "<?php
 \$_SESSION[\"PSWD_BASE\"]=\"$MDP_OCS\";
 ?>" > /var/www/se3/includes/dbconfig.inc.php
 
-cd /tmp/install/ocs/
+cd /opt/install/ocs/
 ./setup-ocs-se3.sh $MDP_OCS
 
+# Nettoyage ancienne commande
+template_base="/home/templates/base/logon.bat"
+if [ -e "$template_base" ]; then
+	sed -i "/ocs.bat/d" $template_base
+	sed -i "/cpauOcs.job/d" $template_base
+fi
 
+if [ -e "/var/se3/Progs/ro/deploy" ]; then
+	rm -rf "/var/se3/Progs/ro/deploy"
+fi
+
+# installation du xml 
+OCSCLIENTURL="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/ocs-client"
+OCSCLIENTLOCAL="/var/se3/unattended/install/wpkg/tmp/ocs-client.xml"
+if [ -e "$OCSCLIENTLOCAL" ]; then
+	rm -f $OCSCLIENTLOCAL
+fi
+
+wget $OCSCLIENTURL/ocs-client.xml? -O $OCSCLIENTLOCAL
+
+/var/www/se3/wpkg/bin/installPackage.sh $OCSCLIENTLOCAL 0 admin 0 1
+
+/var/www/se3/wpkg/bin/associer.sh Associer ocs-client _TousLesPostes admin
 
 # perl -pi -e "s/.*OCS_DB_PWD.*/PerlSetVar OCS_DB_PWD $MDP_OCS/" /etc/ocsinventory/ocsinventory.conf
 
@@ -98,8 +114,6 @@ cd /tmp/install/ocs/
 	exit 1
 	;;
 esac 
-
-
 
 exit 0
 
