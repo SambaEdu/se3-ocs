@@ -87,7 +87,7 @@ if [ -e "/var/se3/Progs/ro/deploy" ]; then
 fi
 
 # installation du xml 
-OCSCLIENTURL="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/ocs-client"
+OCSCLIENTURL="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/ocs"
 OCSCLIENTLOCAL="/var/se3/unattended/install/wpkg/tmp/ocs-client.xml"
 if [ -e "$OCSCLIENTLOCAL" ]; then
 	rm -f $OCSCLIENTLOCAL
