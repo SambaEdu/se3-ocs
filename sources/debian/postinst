@@ -97,7 +97,7 @@ wget $OCSCLIENTURL/ocs-client.xml? -O $OCSCLIENTLOCAL
 
 /var/www/se3/wpkg/bin/installPackage.sh $OCSCLIENTLOCAL 0 admin 0 1
 
-/var/www/se3/wpkg/bin/associer.sh Associer ocs-client _TousLesPostes admin
+/var/www/se3/wpkg/bin/associer.sh Associer ocs-client _TousLesPostes admin || true
 
 # perl -pi -e "s/.*OCS_DB_PWD.*/PerlSetVar OCS_DB_PWD $MDP_OCS/" /etc/ocsinventory/ocsinventory.conf
 
