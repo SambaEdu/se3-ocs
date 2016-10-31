@@ -80,6 +80,7 @@ template_base="/home/templates/base/logon.bat"
 if [ -e "$template_base" ]; then
 	sed -i "/ocs.bat/d" $template_base
 	sed -i "/cpauOcs.job/d" $template_base
+	sed -i "/cpauOcs2.job/d" $template_base
 fi
 
 if [ -e "/var/se3/Progs/ro/deploy" ]; then
