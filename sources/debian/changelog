@@ -1,4 +1,4 @@
-se3-ocs (2.1.0~1) unstable; urgency=low
+se3-ocs (2.1.0) unstable; urgency=low
 
   * Création de la page inventaire consultatble depuis la gestion des parcs
   * Correction du postinst pour deploiement du client via un xml
