@@ -1,3 +1,11 @@
+se3-ocs (2.1.0) unstable; urgency=low
+
+  * Création de la page inventaire consultatble depuis la gestion des parcs
+  * Correction du postinst pour deploiement du client via un xml
+
+ -- Laurent JOLY <laurentjoly@orange.fr>  Tue, 01 Nov 2016 21:16:00 +0200
+
+
 se3-ocs (2.0-6~1) unstable; urgency=low
 
   * Modification du chemin temporaire de l'installation pour /opt
