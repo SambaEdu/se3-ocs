@@ -1,3 +1,10 @@
+se3-ocs (2.1.1) unstable; urgency=low
+
+  * bugfix sur les variables apache2
+
+ -- Franck Molle <franck.molle-at-gmail.com>  wed, 07 Apr 2017 11:48:00 +0200
+
+
 se3-ocs (2.1.0) unstable; urgency=low
 
   * Création de la page inventaire consultatble depuis la gestion des parcs
