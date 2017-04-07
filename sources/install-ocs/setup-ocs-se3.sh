@@ -38,15 +38,15 @@ DB_SERVER_PORT="3306"
 DB_SERVER_USER="ocs"
 DB_SERVER_PWD="$1"
 # Where is Apache daemon binary (if empty, will try to find it)
-APACHE_BIN=""
+APACHE_BIN="/usr/sbin/apache2"
 # Where is Apache configuration file (if empty, will try to find it)
-APACHE_CONFIG_FILE=""
+APACHE_CONFIG_FILE="/etc/apache2/apache2.conf"
 # Where is Apache includes configuration directory (if emty, will try to find it)
-APACHE_CONFIG_DIRECTORY=""
+APACHE_CONFIG_DIRECTORY="/etc/apache2/conf.d/"
 # Which user is running Apache web server (if empty, will try to find it)
-APACHE_USER=""
+APACHE_USER="www-data"
 # Which group is running Apache web server (if empty, will try to find it)
-APACHE_GROUP=""
+APACHE_GROUP="www-data"
 # Where is Apache document root directory (if empty, will try to find it)
 APACHE_ROOT_DOCUMENT=""
 # Which version of mod_perl is apache using,  1 for <= 1.999_21 and 2 for >= 1.999_22 (if empty, user will be asked for)
@@ -147,7 +147,10 @@ then
 fi
 echo "Found Apache daemon $APACHE_BIN_FOUND" >> $SETUP_LOG
 # Ask user's confirmation 
-res=0
+res=1
+# modif keyser la variable est init au depart donc on ecrase pas la valeur
+
+
 while [ $res -eq 0 ]
 do
     echo -n "Where is Apache daemon binary [$APACHE_BIN_FOUND] ?"
@@ -249,9 +252,9 @@ then
 		;;
     esac
 fi
-echo "Found Apache user account $APACHE_USER_FOUND" >> $SETUP_LOG
-# Ask user's confirmation 
-res=0
+# echo "Found Apache user account $APACHE_USER_FOUND" >> $SETUP_LOG
+# modif keyser 03/2017 vlaur fixee au depart du script 
+res=1
 while [ $res -eq 0 ]
 do
     echo -n "Which user account is running Apache web server [$APACHE_USER_FOUND] ?"
@@ -307,7 +310,7 @@ then
 fi
 echo "Found Apache user group $APACHE_GROUP_FOUND" >> $SETUP_LOG
 # Ask user's confirmation 
-res=0
+res=1
 while [ $res -eq 0 ]
 do
     echo -n "Which user group is running Apache web server [$APACHE_GROUP_FOUND] ?"
@@ -371,12 +374,13 @@ then
 	;;
     esac
 fi
-echo "Found Apache Include configuration directory $APACHE_CONFIG_DIRECTORY_FOUND" >> $SETUP_LOG
-# Ask user's confirmation 
-echo "Setup found Apache Include configuration directory in"
-echo "$APACHE_CONFIG_DIRECTORY_FOUND."
-echo "Setup will put OCS Inventory NG Apache configuration in this directory."
-res=0
+# modif keyser 04/2017
+# echo "Found Apache Include configuration directory $APACHE_CONFIG_DIRECTORY_FOUND" >> $SETUP_LOG
+# # Ask user's confirmation 
+# echo "Setup found Apache Include configuration directory in"
+# echo "$APACHE_CONFIG_DIRECTORY_FOUND."
+# echo "Setup will put OCS Inventory NG Apache configuration in this directory."
+res=1
 while [ $res -eq 0 ]
 do
     echo -n "Where is Apache Include configuration directory [$APACHE_CONFIG_DIRECTORY_FOUND] ?"
